@@ -108,12 +108,12 @@ function create_root_filesystem {
 # create and mount stick image
 function create_stick_image {
     pp INFO "Create stick image (requires sudo privileges)"
-    if [[ $(id) != uid=0(root)* ]]; then
+    if [ "$(id -u)" != "0" ]; then
         pp ERROR "Start script with sudo"
         exit 1
     fi
 
-    if [ $(cat /sys/module/loop/parameters/max_part) == "0" ]; then
+    if [ "$(cat /sys/module/loop/parameters/max_part)" == "0" ]; then
         pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
         read confirm
         if [ "$confirm" == "y" ]; then
@@ -137,7 +137,7 @@ function create_stick_image {
         echo t # Change partition type
         echo c # W95 FAT32 (LBA)
         echo w # Write changes
-        ) | sudo fdisk iconnect-stick-$LINUX_KERNEL_VERSION.raw
+        ) | fdisk iconnect-stick-$LINUX_KERNEL_VERSION.raw
         losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
         mkfs.vfat /dev/loop0p1
         losetup -d /dev/loop0
