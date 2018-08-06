@@ -108,6 +108,18 @@ function create_root_filesystem {
 # create and mount stick image
 function create_stick_image {
     pp INFO "Create stick image (requires sudo privileges)"
+
+    if [ $(cat /sys/module/loop/parameters/max_part) == "0" ]; then
+        pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
+        read confirm
+        if [ "$confirm" == "y" ]; then
+            sudo modprobe -r loop
+            sudo modprobe loop max_part=31
+        else
+            pp ERROR "Can't create stick image without reloading"
+            exit 1
+        fi
+    fi
     
     if [ ! -f "iconnect-stick-$LINUX_KERNEL_VERSION.raw" ]; then
         dd if=/dev/zero of=iconnect-stick-$LINUX_KERNEL_VERSION.raw bs=1M count=256
@@ -118,19 +130,24 @@ function create_stick_image {
         echo 1 # Partition number
         echo 8192 # First sector
         echo   # Last sector (Accept default: varies)
+        echo t # Change partition type
+        echo c # W95 FAT32 (LBA)
         echo w # Write changes
         ) | sudo fdisk iconnect-stick-$LINUX_KERNEL_VERSION.raw
+        sudo losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
+        mkfs.vfat /dev/loop0p1
+        sudo losetup -d /dev/loop0
     fi
     sudo losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
     mkdir -p image/mnt
     sudo mount /dev/loop0p1 image/mnt
-    cd image
     for a in fs-kernel fs-system fs-config; do
-        tar cf --lzma mnt/$a.tar.lzma $a
+        cd image/$a
+        tar cf ../mnt/$a.tar.lzma --lzma *
+        cd ../..
     done
-    cp uboot.ramfs.gz mnt
-    cp uImage_nasplug_2.6.30.9_ramdisk mnt
-    cd ..
+    cp image/uboot.ramfs.gz mnt
+    cp image/uImage_nasplug_2.6.30.9_ramdisk mnt
     sudo umount image/mnt
     sudo losetup -d /dev/loop0
 }
