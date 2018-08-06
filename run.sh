@@ -108,15 +108,19 @@ function create_root_filesystem {
 # create and mount stick image
 function create_stick_image {
     pp INFO "Create stick image (requires sudo privileges)"
+    if [[ $(id) != uid=0(root)* ]]; then
+        pp ERROR "Start script with sudo"
+        exit 1
+    fi
 
     if [ $(cat /sys/module/loop/parameters/max_part) == "0" ]; then
         pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
         read confirm
         if [ "$confirm" == "y" ]; then
-            sudo modprobe -r loop
-            sudo modprobe loop max_part=31
+            modprobe -r loop
+            modprobe loop max_part=31
         else
-            pp ERROR "Can't create stick image without reloading"
+            pp ERROR "Can't create stick image without reloading kernel module"
             exit 1
         fi
     fi
@@ -134,13 +138,13 @@ function create_stick_image {
         echo c # W95 FAT32 (LBA)
         echo w # Write changes
         ) | sudo fdisk iconnect-stick-$LINUX_KERNEL_VERSION.raw
-        sudo losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
+        losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
         mkfs.vfat /dev/loop0p1
-        sudo losetup -d /dev/loop0
+        losetup -d /dev/loop0
     fi
-    sudo losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
+    losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
     mkdir -p image/mnt
-    sudo mount /dev/loop0p1 image/mnt
+    mount /dev/loop0p1 image/mnt
     for a in fs-kernel fs-system fs-config; do
         cd image/$a
         tar cf ../mnt/$a.tar.lzma --lzma *
@@ -148,8 +152,8 @@ function create_stick_image {
     done
     cp image/uboot.ramfs.gz mnt
     cp image/uImage_nasplug_2.6.30.9_ramdisk mnt
-    sudo umount image/mnt
-    sudo losetup -d /dev/loop0
+    umount image/mnt
+    losetup -d /dev/loop0
 }
 
 case "$1" in
