@@ -5,7 +5,7 @@ kernel/*
 toolchain/*
 !toolchain/.gitkeep
 
-image/fs-kernel/*
-!image/fs-kernel/lib/firmware
+image/fs-kernel/lib/modules
+image/fs-kernel/boot
 
 image/mnt/*
