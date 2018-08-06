@@ -1,0 +1,18 @@
+TARGETS = watchdog iconnect-leds resolvconf urandom uuidd avahi-daemon sendsigs rsyslog umountnfs.sh rpcbind nfs-common hwclock.sh networking umountfs cryptdisks cryptdisks-early umountroot halt reboot
+resolvconf: watchdog iconnect-leds
+urandom: watchdog iconnect-leds
+uuidd: watchdog iconnect-leds
+avahi-daemon: watchdog iconnect-leds
+sendsigs: uuidd avahi-daemon watchdog iconnect-leds
+rsyslog: avahi-daemon sendsigs watchdog iconnect-leds
+umountnfs.sh: sendsigs uuidd avahi-daemon rsyslog watchdog iconnect-leds
+rpcbind: umountnfs.sh watchdog iconnect-leds
+nfs-common: umountnfs.sh watchdog iconnect-leds
+hwclock.sh: nfs-common uuidd rsyslog watchdog iconnect-leds
+networking: rpcbind umountnfs.sh watchdog iconnect-leds
+umountfs: resolvconf uuidd hwclock.sh rpcbind umountnfs.sh urandom avahi-daemon networking watchdog iconnect-leds
+cryptdisks: umountfs watchdog iconnect-leds
+cryptdisks-early: cryptdisks umountfs watchdog iconnect-leds
+umountroot: umountfs cryptdisks cryptdisks-early watchdog iconnect-leds
+halt: umountroot watchdog iconnect-leds
+reboot: umountroot watchdog iconnect-leds

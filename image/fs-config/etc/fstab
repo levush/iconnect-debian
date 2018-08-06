@@ -1,0 +1,5 @@
+# static fstab
+/dev/sda1	/	ext3	nofail,relatime		0 0
+#/dev/sda2	swap	swap	defaults		0 0
+tmpfs	/tmp		tmpfs	defaults,mode=1777	0 0
+tmpfs	/var/tmp	tmpfs	defaults,mode=1777	0 0

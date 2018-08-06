@@ -1,0 +1,57 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          iconnect-leds
+# Required-Start:    $remote_fs $syslog $all
+# Required-Stop:     $all
+# Default-Start:     1 2 3 4 5
+# Default-Stop:	     0 6
+# Short-Description: Control iConnect LEDs
+### END INIT INFO
+
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+do_start() {
+        [ "$VERBOSE" != no ] && log_begin_msg "Running iconnect-leds"
+
+echo default-on >/sys/class/leds/power:blue/trigger
+echo heartbeat >/sys/class/leds/power:red/trigger
+
+iptables -A INPUT -p tcp --dport 22   -j LED --led-trigger-id tcpssh --led-delay 100
+ip6tables -A INPUT -p tcp --dport 22   -j LED --led-trigger-id tcpssh --led-delay 100
+echo netfilter-tcpssh >/sys/class/leds/otb:blue/trigger
+
+	return 0
+
+}
+
+do_stop() {
+	echo none >/sys/class/leds/power:blue/trigger
+	echo default-on >/sys/class/leds/power:red/trigger
+	echo none >/sys/class/leds/otb:blue/trigger
+	echo 0 >/sys/class/leds/usb1:blue/brightness
+	echo 0 >/sys/class/leds/usb2:blue/brightness
+	echo 0 >/sys/class/leds/usb3:blue/brightness
+	echo 0 >/sys/class/leds/usb4:blue/brightness
+	return 0
+}
+
+case "$1" in
+    start)
+	do_start
+        ;;
+    restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+        ;;
+    stop)
+        do_stop
+        ;;
+    *)
+        echo "Usage: $0 start|stop" >&2
+        exit 3
+        ;;
+esac

@@ -1,0 +1,11 @@
+kernel/*
+!kernel/.gitkeep
+!kernel/patches
+
+toolchain/*
+!toolchain/.gitkeep
+
+image/fs-kernel/*
+!image/fs-kernel/lib/firmware
+
+image/mnt/*

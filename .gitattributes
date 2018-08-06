@@ -1,0 +1,5 @@
+image/uImage_nasplug_2.6.30.9_ramdisk filter=lfs diff=lfs merge=lfs -text
+image/uboot.ramfs.gz filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.fw filter=lfs diff=lfs merge=lfs -text
+*.csp filter=lfs diff=lfs merge=lfs -text
