@@ -26,7 +26,8 @@ function pp {
 
 # install arm compiler toolchain and other packages
 function setup_environment {
-    #apt install -y $PACKAGES
+    pp INFO "Install packages"
+    sudo apt install -y u-boot-tools wget patch fdisk dosfstools lzma
 
     pp INFO "Download ARM compiler toolchain"
     mkdir -p toolchain
@@ -147,13 +148,15 @@ function create_stick_image {
     mount /dev/loop0p1 image/mnt
     for a in fs-kernel fs-system fs-config; do
         cd image/$a
-        tar cf ../mnt/$a.tar.lzma --lzma *
+        tar c * | lzma -c > ../mnt/$a.tar.lzma
         cd ../..
     done
     cp image/uboot.ramfs.gz mnt
     cp image/uImage_nasplug_2.6.30.9_ramdisk mnt
     umount image/mnt
     losetup -d /dev/loop0
+
+    pp INFO "write image to iconnect-stick-$LINUX_KERNEL_VERSION.raw\n\nuse 'dd if=iconnect-stick-$LINUX_KERNEL_VERSION.raw of=/dev/<drive> bs=1M' to write image to usb drive"
 }
 
 case "$1" in
