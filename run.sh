@@ -1,5 +1,6 @@
 #!/bin/bash
 source config.vars
+source *_functions.sh
 
 export ARCH=arm
 export CROSS_COMPILE=../../toolchain/arm/bin/arm-none-eabi-
@@ -25,7 +26,7 @@ function pp {
 }
 
 # install arm compiler toolchain and other packages
-function setup_environment {
+function environment_setup {
     pp INFO "Install packages"
     sudo apt install -y u-boot-tools wget patch fdisk dosfstools lzma
 
@@ -41,152 +42,40 @@ function setup_environment {
     fi
 }
 
-# download and extract linux kernel
-function get_linux_kernel {
-    pp INFO "Download linux kernel $LINUX_KERNEL_VERSION"
-    mkdir -p kernel
-    if [ ! -d "kernel/$LINUX_KERNEL_DIR" ]; then 
-        wget -O kernel/linux_kernel.tar.xz $LINUX_KERNEL_LINK
-        tar -xf kernel/linux_kernel.tar.xz -C kernel
-        rm kernel/linux_kernel.tar.xz
-    else
-        pp WARN "already downloaded"
-    fi
-}
-
-# configure linux kernel
-function menu_config {
-    cd kernel/$LINUX_KERNEL_DIR
-    make menuconfig
-    cd ../..
-}
-
-# patch linux kernel
-function patch_kernel {
-    cd kernel/$LINUX_KERNEL_DIR
-    pp INFO "Patch linux kernel"
-    if [ ! -f "kernel/$LINUX_KERNEL_DIR/.config" ]; then
-        for p in $(ls ../patches); do
-            patch -p 1 < ../patches/$p
-        done
-    fi
-    cd ../..
-}
-
-# build linux kernel
-function build_kernel {
-    cd kernel/$LINUX_KERNEL_DIR
-    pp INFO "Build linux kernel $LINUX_KERNEL_VERSION"
-    pp INFO "Build dtbs"
-    make dtbs
-    pp INFO "Build uImage"
-    make LOADADDR=$LINUX_KERNEL_UIMAGE_LOADADDR uImage
-    pp INFO "Build modules"
-    make modules
-    pp INFO "Build firmware"
-    make firmware
-    cd ../..
-}
-
-# install linux kernel
-function install_kernel {
-    mkdir -p image/fs-kernel/boot
-    pp INFO "Install linux kernel"
-    cp kernel/$LINUX_KERNEL_DIR/arch/arm/boot/uImage image/fs-kernel/boot
-    cd kernel/$LINUX_KERNEL_DIR
-    pp INFO "Install modules"
-    make INSTALL_MOD_PATH=../../image/fs-kernel modules_install
-    #pp INFO "Install headers"
-    #make INSTALL_HDR_PATH=.. headers_install
-    cd ../..
-}
-
-# create root filesystem
-function create_root_filesystem {
-    pp INFO "Create root filesystem"
-}
-
-# create and mount stick image
-function create_stick_image {
-    pp INFO "Create stick image (requires sudo privileges)"
+function check_root_privileges {
     if [ "$(id -u)" != "0" ]; then
         pp ERROR "Start script with sudo"
         exit 1
     fi
-
-    if [ "$(cat /sys/module/loop/parameters/max_part)" == "0" ]; then
-        pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
-        read confirm
-        if [ "$confirm" == "y" ]; then
-            modprobe -r loop
-            modprobe loop max_part=31
-        else
-            pp ERROR "Can't create stick image without reloading kernel module"
-            exit 1
-        fi
-    fi
-    
-    if [ ! -f "iconnect-stick-$LINUX_KERNEL_VERSION.raw" ]; then
-        dd if=/dev/zero of=iconnect-stick-$LINUX_KERNEL_VERSION.raw bs=1M count=256
-        (
-        echo o # Create a new empty DOS partition table
-        echo n # Add a new partition
-        echo p # Primary partition
-        echo 1 # Partition number
-        echo 8192 # First sector
-        echo   # Last sector (Accept default: varies)
-        echo t # Change partition type
-        echo c # W95 FAT32 (LBA)
-        echo w # Write changes
-        ) | fdisk iconnect-stick-$LINUX_KERNEL_VERSION.raw
-        losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
-        mkfs.vfat /dev/loop0p1
-        losetup -d /dev/loop0
-    fi
-    losetup /dev/loop0 iconnect-stick-$LINUX_KERNEL_VERSION.raw
-    mkdir -p image/mnt
-    mount /dev/loop0p1 image/mnt
-    for a in fs-kernel fs-system fs-config; do
-        cd image/$a
-        tar c * | lzma -c > ../mnt/$a.tar.lzma
-        cd ../..
-    done
-    cp image/uboot.ramfs.gz mnt
-    cp image/uImage_nasplug_2.6.30.9_ramdisk mnt
-    umount image/mnt
-    losetup -d /dev/loop0
-
-    pp INFO "write image to iconnect-stick-$LINUX_KERNEL_VERSION.raw\n\nuse 'dd if=iconnect-stick-$LINUX_KERNEL_VERSION.raw of=/dev/<drive> bs=1M' to write image to usb drive"
 }
 
 case "$1" in
     env_setup)
-        setup_environment
+        environment_setup
         ;;
-    kernel_get)
-        get_linux_kernel
+    kernel)
+        kernel_download
+        kernel_patch
+        kernel_build
+        kernel_install
         ;;
-    kernel_config)
-        menu_config
+    image)
+        image_create_raw
+        image_build
         ;;
-    kernel_patch)
-        patch_kernel
-        ;;
-    kernel_build)
-        build_kernel
-        ;;
-    kernel_install)
-        install_kernel
-        ;;
-    fs_create)
-        create_root_filesystem
+    fs)
+        filesystem_build
         ;;
     image_create)
-        create_stick_image
+        create_raw_image
+        build_image
         ;;
     *)
-        pp ERROR "unknown command"
-        exit 1
+        eval $1
+        if [[ $? != 0 ]]; then
+            pp ERROR "unknown command"
+            exit 1
+        fi
 esac
 
 pp INFO "done"
