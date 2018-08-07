@@ -1,9 +1,13 @@
 #!/bin/bash
 source config.vars
-source *_functions.sh
+source kernel_functions.sh
+source image_functions.sh
+source filesystem_functions.sh
 
-export ARCH=arm
-export CROSS_COMPILE=../../toolchain/arm/bin/arm-none-eabi-
+export GIT_REPO_DIR=$PWD
+
+# exit on first error
+set -e
 
 # pretty print
 function pp {
@@ -27,9 +31,6 @@ function pp {
 
 # install arm compiler toolchain and other packages
 function environment_setup {
-    pp INFO "Install packages"
-    sudo apt install -y u-boot-tools wget patch fdisk dosfstools lzma
-
     pp INFO "Download ARM compiler toolchain"
     mkdir -p toolchain
     if [ ! -d "toolchain/arm" ]; then 
@@ -40,6 +41,22 @@ function environment_setup {
     else
         pp WARN "already installed"
     fi
+
+    pp INFO "Copy image/fs-config to work directory"
+    if [ ! -d "image/fs-config" ]; then
+        mkdir -p image
+        cp -r $GIT_REPO_DIR/image/fs-config image/fs-config
+    else
+        pp WARN "image/fs-config does already exist"
+    fi
+
+    pp INFO "Copy image/fs-kernel/lib/firmware to work directory"
+    if [ ! -d "image/fs-kernel/lib/firmware" ]; then
+        mkdir -p image/fs-kernel/lib
+        cp -r $GIT_REPO_DIR/image/fs-kernel/lib/firmware image/fs-kernel/lib/firmware
+    else
+        pp WARN "image/fs-kernel/lib/firmware does already exist"
+    fi
 }
 
 function check_root_privileges {
@@ -49,6 +66,10 @@ function check_root_privileges {
     fi
 }
 
+mkdir -p $WORK_DIR
+cd $WORK_DIR
+WORK_DIR=$(pwd)
+
 case "$1" in
     env_setup)
         environment_setup
@@ -57,25 +78,26 @@ case "$1" in
         kernel_download
         kernel_patch
         kernel_build
+        ;;
+    kernel_install)
         kernel_install
+        ;;
+    filesystem)
+        filesystem_debootstrap
+        filesystem_configure
         ;;
     image)
         image_create_raw
         image_build
         ;;
-    fs)
-        filesystem_build
-        ;;
-    image_create)
-        create_raw_image
-        build_image
-        ;;
     *)
-        eval $1
+        # for debugging
+        $1
         if [[ $? != 0 ]]; then
             pp ERROR "unknown command"
             exit 1
         fi
 esac
+cd $GIT_REPO_DIR
 
 pp INFO "done"

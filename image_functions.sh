@@ -34,24 +34,34 @@ function image_build {
     check_loop_module
 
     if [ -f $IMAGE_FILE ]; then
-        losetup /dev/loop0 $IMAGE_FILE
-        mkdir -p image/mnt
-        mount /dev/loop0p1 image/mnt
+        image_mount
         for a in fs-kernel fs-system fs-config; do
             cd image/$a
-            tar c * | lzma -c > ../mnt/$a.tar.lzma
-            cd ../..
+            tar pc * | lzma -c > $WORK_DIR/mnt/$a.tar.lzma
+            cd $WORK_DIR
         done
-        cp image/uboot.ramfs.gz mnt
-        cp image/uImage_nasplug_2.6.30.9_ramdisk mnt
-        umount image/mnt
-        losetup -d /dev/loop0
+        cp $GIT_REPO_DIR/image/uboot.ramfs.gz mnt
+        cp $GIT_REPO_DIR/image/uImage_nasplug_2.6.30.9_ramdisk mnt
+        image_umount
 
-        pp INFO "write image to $IMAGE_FILE\n\nuse 'dd if=$IMAGE_FILE of=/dev/<drive> bs=1M' to write image to usb drive"
+        pp INFO "$IMAGE_FILE is ready\n\nuse 'sudo dd if=$IMAGE_FILE of=/dev/<drive> bs=1M' to write image to usb drive"
     else
         pp ERROR "$IMAGE_FILE does not exist, execute 'create_raw_image' first"
         exit 1
     fi
+}
+
+function image_mount {
+    check_root_privileges
+    losetup /dev/loop0 $IMAGE_FILE
+    mkdir -p mnt
+    mount /dev/loop0p1 mnt
+}
+
+function image_umount {
+    check_root_privileges
+    umount mnt
+    losetup -d /dev/loop0
 }
 
 function check_loop_module {

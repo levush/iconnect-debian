@@ -1,12 +1,13 @@
 kernel/*
-!kernel/.gitkeep
 !kernel/patches
 
 toolchain/*
-!toolchain/.gitkeep
 
 image/fs-kernel/lib/modules
 image/fs-kernel/boot
+image/fs-system/*
 
 image/mnt/*
 *.raw
+
+.vagrant/*

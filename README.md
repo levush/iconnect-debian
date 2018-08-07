@@ -4,12 +4,14 @@
 
     ./run.sh env_setup
 
+## Create filesystem
+
+    ./run.sh filesystem
+
 ## Build linux kernel
 
-    ./run.sh kernel_get
-    ./run.sh kernel_config
-    ./run.sh kernel_build
-
-## Create root filesystem
+    ./run.sh kernel
 
 ## Build stick image
+
+    ./run.sh image
