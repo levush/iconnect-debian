@@ -84,7 +84,6 @@ case "$1" in
         ;;
     filesystem)
         filesystem_debootstrap
-        filesystem_configure
         ;;
     image)
         image_create_raw

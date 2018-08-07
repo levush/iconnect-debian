@@ -19,3 +19,5 @@ iface wlan0 inet dhcp
     wpa-ssid "ssid"
     wpa-psk "password"
 
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
