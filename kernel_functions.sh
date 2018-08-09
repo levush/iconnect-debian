@@ -69,9 +69,11 @@ function kernel_build_all {
 function kernel_build_deb {
     export ARCH=arm
     export CROSS_COMPILE=$WORK_DIR/toolchain/arm/bin/arm-none-eabi-
+    cd kernel/$LINUX_KERNEL_DIR
     pp INFO "Build kernel deb packages"
 
     make -j $COMPILE_CORES deb-pkg LOCALVERSION=-iconnect KDEB_PKGVERSION=1
+    cd $WORK_DIR
 }
 
 # install linux kernel
