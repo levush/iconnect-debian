@@ -69,8 +69,9 @@ function kernel_install {
     make INSTALL_MOD_PATH=$WORK_DIR/image/fs-kernel modules_install
     pp INFO "Install headers"
     make INSTALL_HDR_PATH=$WORK_DIR/image/fs-kernel/usr headers_install
-    cd $WORK_DIR/image/fs-kernel/lib/modules
-    rm build
-    ln -s ../../usr/include build
+    cd $WORK_DIR/image/fs-kernel/lib/modules/$LINUX_KERNEL_VERSION-iconnect
+    rm build source
+    ln -s ../../../usr/include build
+    ln -s ../../../usr/include source
     cd $WORK_DIR
 }

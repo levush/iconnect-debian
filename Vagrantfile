@@ -11,6 +11,6 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    sudo apt-get install -y git u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static bin-fmtsupport bc libssl-dev
+    sudo apt-get install -y git u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static bin-fmtsupport bc libssl-dev dpkg-dev flex bison
   SHELL
 end
