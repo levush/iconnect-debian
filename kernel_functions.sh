@@ -54,6 +54,26 @@ function kernel_build {
     cd $WORK_DIR
 }
 
+function kernel_build_all {
+    export ARCH=arm
+    export CROSS_COMPILE=$WORK_DIR/toolchain/arm/bin/arm-none-eabi-
+    cd kernel/$LINUX_KERNEL_DIR
+    pp INFO "Build linux kernel $LINUX_KERNEL_VERSION"
+
+    make -j $COMPILE_CORES
+    pp INFO "Build uImage"
+    make LOADADDR=0x00008000 uImage
+    cd $WORK_DIR
+}
+
+function kernel_build_deb {
+    export ARCH=arm
+    export CROSS_COMPILE=$WORK_DIR/toolchain/arm/bin/arm-none-eabi-
+    pp INFO "Build kernel deb packages"
+
+    make -j $COMPILE_CORES deb-pkg LOCALVERSION=-iconnect KDEB_PKGVERSION=1
+}
+
 # install linux kernel
 function kernel_install {
     check_root_privileges
@@ -67,11 +87,11 @@ function kernel_install {
     cd kernel/$LINUX_KERNEL_DIR
     pp INFO "Install modules"
     make INSTALL_MOD_PATH=$WORK_DIR/image/fs-kernel modules_install
-    pp INFO "Install headers"
-    make INSTALL_HDR_PATH=$WORK_DIR/image/fs-kernel/usr headers_install
-    cd $WORK_DIR/image/fs-kernel/lib/modules/$LINUX_KERNEL_VERSION-iconnect
-    rm build source
-    ln -s ../../../usr/include build
-    ln -s ../../../usr/include source
+    # pp INFO "Install headers"
+    # make INSTALL_HDR_PATH=$WORK_DIR/image/fs-kernel/usr headers_install
+    # cd $WORK_DIR/image/fs-kernel/lib/modules/$LINUX_KERNEL_VERSION-iconnect
+    # rm build source
+    # ln -s ../../../usr/include build
+    # ln -s ../../../usr/include source
     cd $WORK_DIR
 }
