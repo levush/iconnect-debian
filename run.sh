@@ -125,6 +125,7 @@ WORK_DIR=$(pwd)
 case "$1" in
     help)
         help_print
+        ;;
     setup)
         setup_work_dir
         setup_build_env
