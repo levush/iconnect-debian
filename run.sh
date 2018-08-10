@@ -29,8 +29,8 @@ function pp {
     tput sgr0
 }
 
-# install arm compiler toolchain and other packages
-function environment_setup {
+# install arm compiler toolchain
+function setup_toolchain {
     pp INFO "Download ARM compiler toolchain"
     mkdir -p toolchain
     if [ ! -d "toolchain/arm" ]; then 
@@ -41,7 +41,10 @@ function environment_setup {
     else
         pp WARN "already installed"
     fi
+}
 
+# setup work directory
+function setup_work_dir {
     pp INFO "Copy image/fs-config to work directory"
     if [ ! -d "image/fs-config" ]; then
         mkdir -p image
@@ -59,6 +62,30 @@ function environment_setup {
     fi
 }
 
+# setup chroot build environment
+function setup_build_env {
+    check_root_privileges
+    if [ ! -d "buildenv" ]; then
+        debootstrap --arch=armel --foreign stretch buildenv $DEBIAN_MIRROR
+        cp $(which qemu-arm-static) buildenv/usr/bin
+        cp /etc/resolv.conf buildenv/etc
+
+        LANG=C.UTF-8 chroot buildenv << EOT
+/debootstrap/debootstrap --second-stage
+apt install -y build-essential
+EOT
+        ln kernel buildenv/kernel
+    else
+        pp WARN "Build environment already exists"
+    fi
+}
+
+function setup_build_env_chroot {
+    check_root_privileges
+    pp INFO "Chroot to build environment (Exit with Strg+D)"
+    LANG=C.UTF-8 chroot buildenv
+}
+
 function check_root_privileges {
     if [ "$(id -u)" != "0" ]; then
         pp ERROR "Start script with sudo"
@@ -72,7 +99,8 @@ WORK_DIR=$(pwd)
 
 case "$1" in
     env_setup)
-        environment_setup
+        setup_work_dir
+        setup_build_env
         ;;
     kernel)
         kernel_download

@@ -13,3 +13,5 @@ image/mnt/*
 config.vars
 
 .vagrant/*
+
+work/*
