@@ -71,7 +71,7 @@ function kernel_install {
 }
 
 # build debian kernel packages
-function kernel_build_deb {
+function kernel_deb {
     check_root_privileges
     if [ ! -d "buildenv" ]; then
         pp ERROR "Build environment does not exist"

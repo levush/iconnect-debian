@@ -66,6 +66,7 @@ function setup_work_dir {
 function setup_build_env {
     check_root_privileges
     if [ ! -d "buildenv" ]; then
+        pp INFO "Create build environment"
         debootstrap --arch=armel --foreign stretch buildenv $DEBIAN_MIRROR
         cp $(which qemu-arm-static) buildenv/usr/bin
         cp /etc/resolv.conf buildenv/etc
@@ -93,12 +94,38 @@ function check_root_privileges {
     fi
 }
 
+function help_print {
+    pp INFO "Help"
+    echo <<EOT
+./run.sh <command>
+
+Possible commands are:
+
+setup                       Prepares environment (needs root privileges)
+    setup_work_dir          Creates work directory and copy nesessary files
+    setup_build_env         Creates build chroot environment for building debian packages
+kernel                      Downloads, patches and builds linux kernel
+    kernel_download         Downloads kernel
+    kernel_patch            Creates kernel config and applies patches
+    kernel_build            Builds kernel
+kernel_install              Installs kernel to $WORK_DIR/image/fs-kernel (needs root privileges)
+kernel_deb                  Builds debian packages for updating an existing system (needs root privileges)
+filesystem                  Creates debian filesystem (needs root privileges)
+    filesystem_debootstrap  Creates and prepares filesystem
+image                       Creates and builds raw image for usb disk (needs root privileges)
+    image_create_raw        Creates empty raw image
+    image_build             Creates archives of $WORK_DIR/image/fs-* and prepares the image
+EOT
+}
+
 mkdir -p $WORK_DIR
 cd $WORK_DIR
 WORK_DIR=$(pwd)
 
 case "$1" in
-    env_setup)
+    help)
+        help_print
+    setup)
         setup_work_dir
         setup_build_env
         ;;
