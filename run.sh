@@ -96,7 +96,7 @@ function check_root_privileges {
 
 function help_print {
     pp INFO "Help"
-    echo <<EOT
+    echo "
 ./run.sh <command>
 
 Possible commands are:
@@ -115,7 +115,7 @@ filesystem                  Creates debian filesystem (needs root privileges)
 image                       Creates and builds raw image for usb disk (needs root privileges)
     image_create_raw        Creates empty raw image
     image_build             Creates archives of $WORK_DIR/image/fs-* and prepares the image
-EOT
+"
 }
 
 mkdir -p $WORK_DIR
