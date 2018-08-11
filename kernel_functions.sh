@@ -32,7 +32,7 @@ function kernel_patch {
     pp INFO "Patch linux kernel"
     if [ ! -f ".config" ]; then
         for p in $(ls $GIT_REPO_DIR/patches); do
-            patch < $GIT_REPO_DIR/patches/$p
+            patch -p 1 < $GIT_REPO_DIR/patches/$p
         done
     else
         pp WARN "Kernel is already patched"
