@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function setup_packages {
+    check_root_privileges
+    pp INFO "Install packages"
+    apt install -y git build-essential crossbuild-essential-armel u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static binfmt-support bc libssl-dev fakeroot dpkg-dev flex bison cpio kmod
+}
 
 # install arm compiler toolchain
 function setup_toolchain {

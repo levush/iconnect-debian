@@ -11,6 +11,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
-    sudo apt-get install -y git crossbuild-essential-armel u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static binfmt-support bc libssl-dev dpkg-dev flex bison cpio kmod
+    cd /home/vagrant/iconnect-debian
+    sudo ./run.sh setup_packages
   SHELL
 end

@@ -72,22 +72,26 @@ function kernel_install {
 
 # build debian kernel packages
 function kernel_deb {
+    check_root_privileges
+    if [ ! -d "buildenv" ]; then
+        pp ERROR "Build environment does not exist"
+        exit 1
+    fi
+
+    DEB_PKG_VERSION=$(date "+%d%m%y")
+
     pp INFO "Build debian kernel packages"
     cd kernel/$LINUX_KERNEL_DIR
-    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
+    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEB_PKG_VERSION deb-pkg
+
+    pp INFO "Rebuild kernel header scripts in chroot environment"
+    cd $WORK_DIR/kernel
+    dpkg-deb -R linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/buildenv/headers
+    
+    LANG=C.UTF-8 chroot $WORK_DIR/buildenv << EOT
+cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
+make scripts
+EOT
+    dpkg-deb -b $WORK_DIR/buildenv/headers linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
     cd $WORK_DIR
-
-#     check_root_privileges
-#     if [ ! -d "buildenv" ]; then
-#         pp ERROR "Build environment does not exist"
-#         exit 1
-#     fi
-
-#     mkdir -p buildenv/kernel
-#     cp -r kernel/$LINUX_KERNEL_DIR buildenv/kernel/$LINUX_KERNEL_DIR
-
-#     LANG=C.UTF-8 chroot buildenv << EOT
-# cd /kernel/$LINUX_KERNEL_DIR
-# make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
-# EOT
 }
