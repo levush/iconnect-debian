@@ -50,9 +50,8 @@ setup                       Prepares environment (needs root privileges)
 kernel                      Downloads, patches and builds linux kernel
     kernel_download         Downloads kernel
     kernel_patch            Creates kernel config and applies patches
-    kernel_build            Builds kernel
+kernel_build                Builds debian packages (needs root privileges)
 kernel_install              Installs kernel to $WORK_DIR/image/fs-kernel (needs root privileges)
-kernel_deb                  Builds debian packages for updating an existing system (needs root privileges)
 filesystem                  Creates debian filesystem (needs root privileges)
     filesystem_debootstrap  Creates and prepares filesystem
 image                       Creates and builds raw image for usb disk (needs root privileges)
@@ -69,25 +68,22 @@ case "$1" in
     help)
         help_print
         ;;
-    setup)
+    create)
         setup_work_dir
         setup_build_env
-        ;;
-    kernel)
         kernel_download
         kernel_patch
         kernel_build
-        ;;
-    kernel_install)
         kernel_install
-        ;;
-    filesystem)
         filesystem_debootstrap
-        ;;
-    image)
         image_create_raw
         image_build
-        ;;
+    deb)
+        setup_work_dir
+        setup_build_env
+        kernel_download
+        kernel_patch
+        kernel_build
     *)
         # for debugging
         $1
