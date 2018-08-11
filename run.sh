@@ -42,7 +42,12 @@ function help_print {
     echo "
 ./run.sh <command>
 
-Possible commands are:
+Main commands:
+
+image                   Creates usb disk raw image *
+deb                     Creates debian kernel packages for kernel upgrades *
+
+Commands for debugging:
 
 setup_work_dir          Creates work directory and copy nesessary files
 setup_build_env         Creates build chroot environment for building debian packages *
