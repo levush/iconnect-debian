@@ -43,8 +43,8 @@ function kernel_patch {
 # build debian kernel packages
 function kernel_build {
     check_root_privileges
-    if [ ! -d "buildenv" ]; then
-        pp ERROR "Build environment does not exist"
+    if [ ! -d "image/fs-system" ]; then
+        pp ERROR "Filesystem does not exist"
         exit 1
     fi
 
@@ -55,17 +55,19 @@ function kernel_build {
     make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEB_PKG_VERSION deb-pkg
 
     pp INFO "Rebuild kernel header scripts in chroot environment"
-    cd $WORK_DIR/kernel
-    dpkg-deb -R linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/buildenv/headers
-    mkdir -p $WORK_DIR/buildenv/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
-    cp $GIT_REPO_DIR/fixes/* $WORK_DIR/buildenv/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
+    dpkg-deb -R $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/image/fs-system/headers
+    mkdir -p $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
+    cp $GIT_REPO_DIR/fixes/* $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
     
-    LANG=C.UTF-8 chroot $WORK_DIR/buildenv << EOT
+    filesystem_chroot_prepare
+    LANG=C.UTF-8 chroot $WORK_DIR/image/fs-system << EOT
 cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
 make scripts
 EOT
-    dpkg-deb -b $WORK_DIR/buildenv/headers linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
-    rm -r $WORK_DIR/buildenv/headers
+    filesystem_chroot_cleanup
+
+    dpkg-deb -b $WORK_DIR/image/fs-system/headers $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
+    rm -r $WORK_DIR/image/fs-system/headers
     cd $WORK_DIR
 }
 

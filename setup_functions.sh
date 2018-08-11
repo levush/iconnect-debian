@@ -3,9 +3,7 @@
 function setup_packages {
     check_root_privileges
     pp INFO "Install packages"
-    apt install -y git git-lfs build-essential crossbuild-essential-armel u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static binfmt-support bc libssl-dev fakeroot dpkg-dev flex bison cpio kmod
-    git lfs install
-    git lfs checkout
+    apt install -y build-essential crossbuild-essential-armel u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static binfmt-support bc libssl-dev fakeroot dpkg-dev flex bison cpio kmod
 }
 
 # install arm compiler toolchain
@@ -18,7 +16,7 @@ function setup_toolchain {
         mv toolchain/$ARM_TOOLCHAIN_DIR toolchain/arm
         rm toolchain/arm_toolchain.tar.bz2
     else
-        pp WARN "already installed"
+        pp WARN "ARM toolchain already installed"
     fi
 }
 
@@ -39,28 +37,4 @@ function setup_work_dir {
     else
         pp WARN "image/fs-kernel/lib/firmware does already exist"
     fi
-}
-
-# setup chroot build environment
-function setup_build_env {
-    check_root_privileges
-    if [ ! -d "buildenv" ]; then
-        pp INFO "Create build environment"
-        debootstrap --arch=armel --foreign stretch buildenv $DEBIAN_MIRROR
-        cp $(which qemu-arm-static) buildenv/usr/bin
-        cp /etc/resolv.conf buildenv/etc
-
-        LANG=C.UTF-8 chroot buildenv << EOT
-/debootstrap/debootstrap --second-stage
-apt install -y build-essential u-boot-tools bc libssl-dev dpkg-dev flex bison cpio kmod
-EOT
-    else
-        pp WARN "Build environment already exists"
-    fi
-}
-
-function setup_build_env_chroot {
-    check_root_privileges
-    pp INFO "Chroot to build environment (Exit with Strg+D)"
-    LANG=C.UTF-8 chroot buildenv
 }

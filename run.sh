@@ -50,14 +50,12 @@ deb                     Creates debian kernel packages for kernel upgrades *
 Commands for debugging:
 
 setup_work_dir          Creates work directory and copy nesessary files
-setup_build_env         Creates build chroot environment for building debian packages *
-setup_build_env_chroot  Chroot into build environment *
+filesystem_debootstrap  Creates and prepares filesystem *
+filesystem_chroot       Chroot into filesystem *
 kernel_download         Downloads kernel
 kernel_patch            Creates kernel config and applies patches
 kernel_build            Builds debian kernel packages *
 kernel_install          Installs debian kernel package to $WORK_DIR/image/fs-kernel *
-filesystem_debootstrap  Creates and prepares filesystem *
-filesystem_chroot       Chroot into filesystem *
 image_create_raw        Creates empty raw image *
 image_build             Creates archives of $WORK_DIR/image/fs-* and prepares the image *
 
@@ -75,18 +73,17 @@ case "$1" in
         ;;
     image)
         setup_work_dir
-        setup_build_env
+        filesystem_debootstrap
         kernel_download
         kernel_patch
         kernel_build
         kernel_install
-        filesystem_debootstrap
         image_create_raw
         image_build
         ;;
     deb)
         setup_work_dir
-        setup_build_env
+        filesystem_debootstrap
         kernel_download
         kernel_patch
         kernel_build

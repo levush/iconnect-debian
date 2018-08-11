@@ -41,6 +41,7 @@ function image_build {
             tar pc * | lzma -c > $WORK_DIR/mnt/$a.tar.lzma
             cd $WORK_DIR
         done
+
         pp INFO "Copy flashing tool ramfs and uImage"
         cp $GIT_REPO_DIR/image/uboot.ramfs.gz mnt
         cp $GIT_REPO_DIR/image/uImage_nasplug_2.6.30.9_ramdisk mnt

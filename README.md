@@ -1,17 +1,22 @@
 # Debian on Iomega iConnect
 
-## Setup Environment
+This repository contains scripts to create a debian iconnect stick image. 
+Moreover it's possible to build debian kernel packages for updating an existing system.
 
-    ./run.sh env_setup
+## Setup
+Be sure that you have git-lfs installed before you clone the repository.
+For Debian: `sudo apt install git-lfs && git lfs install`
 
-## Create filesystem
+Copy `config.vars.sample` to `config.vars`
 
-    ./run.sh filesystem
-
-## Build linux kernel
-
-    ./run.sh kernel
-
-## Build stick image
+## Stick image
 
     ./run.sh image
+
+The image can be found in `<WORK_DIR>/`
+
+## Create debian kernel packages
+
+    ./run.sh deb
+
+The packages can be found in `<WORK_DIR>/kernel`
