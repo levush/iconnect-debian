@@ -3,6 +3,7 @@
 # bootstrap filesystem
 function filesystem_debootstrap {
     check_root_privileges
+    pp INFO "Create filesystem"
     if [ ! -d "image/fs-system" ]; then
         debootstrap --arch=armel --foreign stretch image/fs-system $DEBIAN_MIRROR
         filesystem_chroot_prepare
