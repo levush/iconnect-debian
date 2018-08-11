@@ -78,12 +78,14 @@ case "$1" in
         filesystem_debootstrap
         image_create_raw
         image_build
+        ;;
     deb)
         setup_work_dir
         setup_build_env
         kernel_download
         kernel_patch
         kernel_build
+        ;;
     *)
         # for debugging
         $1
