@@ -78,6 +78,8 @@ function kernel_deb {
         exit 1
     fi
 
+    cp -r kernel/$LINUX_KERNEL_DIR buildenv/kernel/$LINUX_KERNEL_DIR
+
     LANG=C.UTF-8 chroot buildenv << EOT
 cd /kernel/$LINUX_KERNEL_DIR
 make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
