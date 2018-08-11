@@ -78,6 +78,7 @@ function kernel_deb {
         exit 1
     fi
 
+    mkdir -p buildenv/kernel
     cp -r kernel/$LINUX_KERNEL_DIR buildenv/kernel/$LINUX_KERNEL_DIR
 
     LANG=C.UTF-8 chroot buildenv << EOT
