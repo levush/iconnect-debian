@@ -40,38 +40,8 @@ function kernel_patch {
     cd $WORK_DIR
 }
 
-# build linux kernel
-function kernel_build {
-    cd kernel/$LINUX_KERNEL_DIR
-    pp INFO "Build linux kernel $LINUX_KERNEL_VERSION"
-
-    pp INFO "Build dtbs"
-    make dtbs
-    pp INFO "Build uImage"
-    make uImage
-    pp INFO "Build modules"
-    make modules
-    pp INFO "Build firmware"
-    make firmware
-    cd $WORK_DIR
-}
-
-# install linux kernel
-function kernel_install {
-    check_root_privileges
-
-    mkdir -p image/fs-kernel/boot image/fs-kernel/usr
-    pp INFO "Install linux kernel"
-    cp kernel/$LINUX_KERNEL_DIR/arch/arm/boot/uImage image/fs-kernel/boot
-
-    cd kernel/$LINUX_KERNEL_DIR
-    pp INFO "Install modules"
-    make INSTALL_MOD_PATH=$WORK_DIR/image/fs-kernel modules_install
-    cd $WORK_DIR
-}
-
 # build debian kernel packages
-function kernel_deb {
+function kernel_build {
     check_root_privileges
     if [ ! -d "buildenv" ]; then
         pp ERROR "Build environment does not exist"
@@ -93,5 +63,13 @@ cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
 make scripts
 EOT
     dpkg-deb -b $WORK_DIR/buildenv/headers linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
+    rm -r $WORK_DIR/buildenv/headers
+    cd $WORK_DIR
+}
+
+# install linux kernel
+function kernel_install {
+    check_root_privileges
+    dpkg -x kernel/linux-image-*.deb $WORK_DIR/image/fs-kernel
     cd $WORK_DIR
 }
