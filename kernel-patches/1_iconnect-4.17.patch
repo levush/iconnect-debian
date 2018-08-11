@@ -1,5 +1,5 @@
---- linux-4.17/arch/arm/boot/Makefile.orig	2013-09-03 12:34:43.072308344 +0200
-+++ linux-4.17/arch/arm/boot/Makefile	2015-03-17 12:36:06.504042116 +0200
+--- arch/arm/boot/Makefile.orig	2013-09-03 12:34:43.072308344 +0200
++++ arch/arm/boot/Makefile	2015-03-17 12:36:06.504042116 +0200
 @@ -63,8 +63,13 @@
  $(obj)/compressed/vmlinux: $(obj)/Image FORCE
  	$(Q)$(MAKE) $(build)=$(obj)/compressed $@
@@ -16,8 +16,8 @@
  
  endif
  
---- linux-4.17/arch/arm/Kconfig.orig	2013-09-02 22:46:10.000000000 +0200
-+++ linux-4.17/arch/arm/Kconfig	2015-03-17 12:36:06.504042116 +0200
+--- arch/arm/Kconfig.orig	2013-09-02 22:46:10.000000000 +0200
++++ arch/arm/Kconfig	2015-03-17 12:36:06.504042116 +0200
 @@ -1902,6 +1902,16 @@
  	  location into r2 of a bootloader provided DTB is always preferable
  	  to this option.
@@ -35,8 +35,8 @@
  config ARM_ATAG_DTB_COMPAT
  	bool "Supplement the appended DTB with traditional ATAG information"
  	depends on ARM_APPENDED_DTB
---- linux-4.17/.config.orig	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.17/.config	2018-06-09 14:38:07.107190478 +0200
+--- .config.orig	1970-01-01 01:00:00.000000000 +0100
++++ .config	2018-06-09 14:38:07.107190478 +0200
 @@ -0,0 +1,4757 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
@@ -4795,8 +4795,8 @@
 +CONFIG_SBITMAP=y
 +# CONFIG_STRING_SELFTEST is not set
 +# CONFIG_VIRTUALIZATION is not set
---- linux-4.17/arch/arm/configs/iconnect_defconfig.orig	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.17/arch/arm/configs/iconnect_defconfig	2018-06-09 14:38:07.107190478 +0200
+--- arch/arm/configs/iconnect_defconfig.orig	1970-01-01 01:00:00.000000000 +0100
++++ arch/arm/configs/iconnect_defconfig	2018-06-09 14:38:07.107190478 +0200
 @@ -0,0 +1,4757 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
