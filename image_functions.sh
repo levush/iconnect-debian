@@ -65,7 +65,7 @@ function image_umount {
 }
 
 function check_loop_module {
-    if [ ! -f /sys/module/loop/parameters/max_part || "$(cat /sys/module/loop/parameters/max_part)" == "0" ]; then
+    if [ ! -f /sys/module/loop/parameters/max_part ] || [ "$(cat /sys/module/loop/parameters/max_part)" == "0" ]; then
         pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
         read confirm
         if [ "$confirm" == "y" ]; then
