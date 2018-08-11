@@ -45,7 +45,7 @@ function setup_build_env {
 
         LANG=C.UTF-8 chroot buildenv << EOT
 /debootstrap/debootstrap --second-stage
-apt install -y build-essential
+apt install -y build-essential u-boot-tools bc libssl-dev dpkg-dev flex bison cpio kmod
 EOT
     else
         pp WARN "Build environment already exists"

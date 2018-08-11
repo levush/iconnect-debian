@@ -72,17 +72,22 @@ function kernel_install {
 
 # build debian kernel packages
 function kernel_deb {
-    check_root_privileges
-    if [ ! -d "buildenv" ]; then
-        pp ERROR "Build environment does not exist"
-        exit 1
-    fi
+    pp INFO "Build debian kernel packages"
+    cd kernel/$LINUX_KERNEL_DIR
+    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
+    cd $WORK_DIR
 
-    mkdir -p buildenv/kernel
-    cp -r kernel/$LINUX_KERNEL_DIR buildenv/kernel/$LINUX_KERNEL_DIR
+#     check_root_privileges
+#     if [ ! -d "buildenv" ]; then
+#         pp ERROR "Build environment does not exist"
+#         exit 1
+#     fi
 
-    LANG=C.UTF-8 chroot buildenv << EOT
-cd /kernel/$LINUX_KERNEL_DIR
-make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
-EOT
+#     mkdir -p buildenv/kernel
+#     cp -r kernel/$LINUX_KERNEL_DIR buildenv/kernel/$LINUX_KERNEL_DIR
+
+#     LANG=C.UTF-8 chroot buildenv << EOT
+# cd /kernel/$LINUX_KERNEL_DIR
+# make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$(date "+%d%m%y") deb-pkg
+# EOT
 }
