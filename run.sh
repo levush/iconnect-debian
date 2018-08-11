@@ -44,19 +44,19 @@ function help_print {
 
 Possible commands are:
 
-setup                       Prepares environment (needs root privileges)
-    setup_work_dir          Creates work directory and copy nesessary files
-    setup_build_env         Creates build chroot environment for building debian packages
-kernel                      Downloads, patches and builds linux kernel
-    kernel_download         Downloads kernel
-    kernel_patch            Creates kernel config and applies patches
-kernel_build                Builds debian packages (needs root privileges)
-kernel_install              Installs kernel to $WORK_DIR/image/fs-kernel (needs root privileges)
-filesystem                  Creates debian filesystem (needs root privileges)
-    filesystem_debootstrap  Creates and prepares filesystem
-image                       Creates and builds raw image for usb disk (needs root privileges)
-    image_create_raw        Creates empty raw image
-    image_build             Creates archives of $WORK_DIR/image/fs-* and prepares the image
+setup_work_dir          Creates work directory and copy nesessary files
+setup_build_env         Creates build chroot environment for building debian packages *
+setup_build_env_chroot  Chroot into build environment *
+kernel_download         Downloads kernel
+kernel_patch            Creates kernel config and applies patches
+kernel_build            Builds debian kernel packages *
+kernel_install          Installs debian kernel package to $WORK_DIR/image/fs-kernel *
+filesystem_debootstrap  Creates and prepares filesystem *
+filesystem_chroot       Chroot into filesystem *
+image_create_raw        Creates empty raw image *
+image_build             Creates archives of $WORK_DIR/image/fs-* and prepares the image *
+
+* = needs root privileges
 "
 }
 
@@ -68,7 +68,7 @@ case "$1" in
     help)
         help_print
         ;;
-    create)
+    image)
         setup_work_dir
         setup_build_env
         kernel_download

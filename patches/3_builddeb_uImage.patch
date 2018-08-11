@@ -1,4 +1,3 @@
-12/scripts/package/builddeb
 --- scripts/package/builddeb_org	2018-08-11 16:14:12.776543219 +0200
 +++ scripts/package/builddeb	2018-08-11 16:20:42.455408047 +0200
 @@ -81,7 +81,7 @@
