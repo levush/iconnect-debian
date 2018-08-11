@@ -31,8 +31,8 @@ function kernel_patch {
     cd kernel/$LINUX_KERNEL_DIR
     pp INFO "Patch linux kernel"
     if [ ! -f ".config" ]; then
-        for p in $(ls $GIT_REPO_DIR/kernel-patches); do
-            patch < $GIT_REPO_DIR/kernel-patches/$p
+        for p in $(ls $GIT_REPO_DIR/patches); do
+            patch < $GIT_REPO_DIR/patches/$p
         done
     else
         pp WARN "Kernel is already patched"
@@ -57,6 +57,8 @@ function kernel_build {
     pp INFO "Rebuild kernel header scripts in chroot environment"
     cd $WORK_DIR/kernel
     dpkg-deb -R linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/buildenv/headers
+    mkdir -p $WORK_DIR/buildenv/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
+    cp $GIT_REPO_DIR/fixes/* $WORK_DIR/buildenv/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
     
     LANG=C.UTF-8 chroot $WORK_DIR/buildenv << EOT
 cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
