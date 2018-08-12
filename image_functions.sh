@@ -36,7 +36,7 @@ function image_build {
     if [ -f $IMAGE_FILE ]; then
         image_mount
         for a in fs-kernel fs-system fs-config; do
-            pp INFO "Compress $a to archive"
+            pp INFO "Compress $a"
             cd image/$a
             tar pc * | lzma -c > $WORK_DIR/mnt/$a.tar.lzma
             cd $WORK_DIR

@@ -58,6 +58,7 @@ function kernel_build {
 # install linux kernel
 function kernel_install {
     check_root_privileges
+    pp INFO "Install kernel to image/fs-kernel"
     dpkg -x kernel/linux-image-*.deb $WORK_DIR/image/fs-kernel
     cd $WORK_DIR
 }

@@ -12,7 +12,7 @@ function filesystem_debootstrap {
         filesystem_chroot_prepare
         LANG=C.UTF-8 chroot image/fs-system << EOT
 /debootstrap/debootstrap --second-stage
-apt install -y build-essential bison openssh-server
+apt install -y build-essential bison flex libssl-dev openssh-server
 echo -e "${DEFAULT_PASSWORD}\n${DEFAULT_PASSWORD}" | passwd
 EOT
         filesystem_chroot_cleanup
