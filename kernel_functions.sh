@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabi-
+export CROSS_COMPILE=$COMPILE_TOOLCHAIN
 export LOADADDR=0x00008000
 
 # download and extract linux kernel

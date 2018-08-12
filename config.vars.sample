@@ -10,9 +10,11 @@ IMAGE_FILE=iconnect-stick-$LINUX_KERNEL_VERSION.raw
 DEBIAN_MIRROR=http://ftp.de.debian.org/debian/
 DEFAULT_PASSWORD=changeme
 
-COMPILE_CORES=2
-
 ## for local use
-# WORK_DIR=./work
+WORK_DIR=./work
 ## if using vagrant
-WORK_DIR=../iconnect-debian-work
+# WORK_DIR=../iconnect-debian-work
+
+COMPILE_CORES=16
+COMPILE_TOOLCHAIN=arm-linux-gnueabi-
+# COMPILE_TOOLCHAIN=$PWD/$WORK_DIR/toolchain/arm/bin/arm-none-eabi-
