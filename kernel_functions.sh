@@ -53,21 +53,7 @@ function kernel_build {
     pp INFO "Build debian kernel packages"
     cd kernel/$LINUX_KERNEL_DIR
     make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEB_PKG_VERSION deb-pkg
-
-    pp INFO "Rebuild kernel header scripts in chroot environment"
-    dpkg-deb -R $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/image/fs-system/headers
-    mkdir -p $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
-    cp $GIT_REPO_DIR/fixes/* $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
-    
-    filesystem_chroot_prepare
-    LANG=C.UTF-8 chroot $WORK_DIR/image/fs-system << EOT
-cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
-make scripts
-EOT
-    filesystem_chroot_cleanup
-
-    dpkg-deb -b $WORK_DIR/image/fs-system/headers $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
-    rm -r $WORK_DIR/image/fs-system/headers
+    kernel_headers_rebuild
     cd $WORK_DIR
 }
 
@@ -76,4 +62,22 @@ function kernel_install {
     check_root_privileges
     dpkg -x kernel/linux-image-*.deb $WORK_DIR/image/fs-kernel
     cd $WORK_DIR
+}
+
+# rebuild kernel header scripts in chroot environment
+function kernel_headers_rebuild {
+    pp INFO "Rebuild kernel header scripts in chroot environment"
+    dpkg-deb -R $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/image/fs-system/headers
+    mkdir -p $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
+    cp $GIT_REPO_DIR/fixes/* $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
+    
+    filesystem_chroot_prepare
+    LANG=C.UTF-8 chroot $WORK_DIR/image/fs-system << EOT
+cd /headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect
+make CROSS_COMPILE="" scripts
+EOT
+    filesystem_chroot_cleanup
+
+    dpkg-deb -b $WORK_DIR/image/fs-system/headers $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
+    rm -r $WORK_DIR/image/fs-system/headers
 }
