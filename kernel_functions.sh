@@ -48,11 +48,9 @@ function kernel_build {
         exit 1
     fi
 
-    DEB_PKG_VERSION=$(date "+%d%m%y")
-
     pp INFO "Build debian kernel packages"
     cd kernel/$LINUX_KERNEL_DIR
-    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEB_PKG_VERSION deb-pkg
+    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEBIAN_PKG_VERSION deb-pkg
     kernel_headers_rebuild
     cd $WORK_DIR
 }
@@ -67,7 +65,7 @@ function kernel_install {
 # rebuild kernel header scripts in chroot environment
 function kernel_headers_rebuild {
     pp INFO "Rebuild kernel header scripts in chroot environment"
-    dpkg-deb -R $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb $WORK_DIR/image/fs-system/headers
+    dpkg-deb -R $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEBIAN_PKG_VERSION}_armel.deb $WORK_DIR/image/fs-system/headers
     mkdir -p $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
     cp $GIT_REPO_DIR/fixes/* $WORK_DIR/image/fs-system/headers/usr/src/linux-headers-$LINUX_KERNEL_VERSION-iconnect/tools/include/tools
     
@@ -78,6 +76,6 @@ make CROSS_COMPILE="" scripts
 EOT
     filesystem_chroot_cleanup
 
-    dpkg-deb -b $WORK_DIR/image/fs-system/headers $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEB_PKG_VERSION}_armel.deb
+    dpkg-deb -b $WORK_DIR/image/fs-system/headers $WORK_DIR/kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEBIAN_PKG_VERSION}_armel.deb
     rm -r $WORK_DIR/image/fs-system/headers
 }
