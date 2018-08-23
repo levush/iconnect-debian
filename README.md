@@ -10,7 +10,7 @@ For Debian: `sudo apt install git-lfs && git lfs install`
 
 Copy `config.vars.sample` to `config.vars` and modify the file if needed.
 
-Prepare your environment by execute `./run.sh setup_packages` (Debian only).
+Prepare your environment by execute `./run.sh setup_packages` (Debian only) or use the vagrant file to create a virtual machine for building.
 
 Print help with `./run.sh help`.
 
@@ -28,4 +28,4 @@ The packages then can be found in `<WORK_DIR>/kernel`.
 
 ## Credits
 
-Thanks to congenio GmbH for creating the initial patch file and uboot images. Their image and instructions can be found [here](https://www.congenio.de/infos/iconnect.html)
+Thanks to congenio GmbH for creating the initial patch file, uboot images, firmware and usb leds workaround. Their image and instructions can be found [here](https://www.congenio.de/infos/iconnect.html)
