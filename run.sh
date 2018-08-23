@@ -49,6 +49,7 @@ deb                     Creates debian kernel packages for kernel upgrades *
 
 Commands for debugging:
 
+setup_packages          Installs packages needed for cross compiling
 setup_work_dir          Creates work directory and copy nesessary files
 filesystem_debootstrap  Creates and prepares filesystem *
 filesystem_chroot       Chroot into filesystem *

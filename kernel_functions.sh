@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export ARCH=arm
-export CROSS_COMPILE=$COMPILE_TOOLCHAIN
+export CROSS_COMPILE=arm-linux-gnueabi-
 export LOADADDR=0x00008000
 
 # download and extract linux kernel
@@ -50,7 +50,7 @@ function kernel_build {
 
     pp INFO "Build debian kernel packages"
     cd kernel/$LINUX_KERNEL_DIR
-    make -j$COMPILE_CORES KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEBIAN_PKG_VERSION deb-pkg
+    make -j$COMPILE_THREADS KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEBIAN_PKG_VERSION deb-pkg
     kernel_headers_rebuild
     cd $WORK_DIR
 }

@@ -6,20 +6,6 @@ function setup_packages {
     apt install -y build-essential crossbuild-essential-armel u-boot-tools wget patch util-linux dosfstools lzma debootstrap qemu-user-static binfmt-support bc libssl-dev fakeroot dpkg-dev flex bison cpio kmod
 }
 
-# install arm compiler toolchain
-function setup_toolchain {
-    pp INFO "Download ARM compiler toolchain"
-    mkdir -p toolchain
-    if [ ! -d "toolchain/arm" ]; then 
-        wget -O toolchain/arm_toolchain.tar.bz2 $ARM_TOOLCHAIN_LINK
-        tar -xf toolchain/arm_toolchain.tar.bz2 -C toolchain
-        mv toolchain/$ARM_TOOLCHAIN_DIR toolchain/arm
-        rm toolchain/arm_toolchain.tar.bz2
-    else
-        pp WARN "ARM toolchain already installed"
-    fi
-}
-
 # setup work directory
 function setup_work_dir {
     pp INFO "Copy image/fs-config to work directory"
