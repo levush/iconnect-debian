@@ -6,7 +6,8 @@ The scripts are tested with debian, they should also work with other distributio
 
 ## Setup
 Be sure that you have git-lfs installed before you clone the repository.
-For Debian: `sudo apt install git-lfs && git lfs install`
+For Debian: `sudo apt install git-lfs`
+After cloning initialize lfs in repository: `git lfs install`
 
 Copy `config.vars.sample` to `config.vars` and modify the file if needed.
 
