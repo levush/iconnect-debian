@@ -1,0 +1,75 @@
+- name: build kernel packages
+  hosts: cloud_server
+  tasks:
+    - name: install requirements
+      apt:
+        name:
+          - git
+          - git-lfs
+          - rsync
+          - build-essential
+          - crossbuild-essential-armel
+          - u-boot-tools
+          - wget
+          - patch
+          - util-linux
+          - dosfstools
+          - lzma
+          - debootstrap
+          - qemu-user-static
+          - binfmt-support
+          - bc
+          - libssl-dev
+          - fakeroot
+          - dpkg-dev
+          - flex
+          - bison
+          - cpio
+          - kmod
+        update_cache: true
+
+    - name: checkout repo
+      git:
+        repo: "{{ lookup('env','CI_REPOSITORY_URL') }}"
+        dest: /root/iconnect-debian
+        version: gitlab-ci
+ 
+    - name: create work directory
+      file:
+        path: /root/iconnect-debian/work
+        state: directory
+
+    - name: mount cache volume
+      mount:
+        path: /root/iconnect-debian/work
+        src: "/dev/disk/by-id/{{ lookup('env','HCLOUD_CACHE_VOLUME_ID') }}"
+        fstype: ext4
+        opts: discard,defaults
+        state: mounted
+
+    - debug:
+        msg: "building debian packages for kernel {{ lookup('file', '../.ci_kernel_version') }}"
+
+    - name: create config.vars
+      template:
+        src: ./config.vars.sample
+        dest: /root/iconnect-debian/config.vars
+
+    - name: build debian packages
+      shell: ./run.sh deb
+      args:
+        chdir: /root/iconnect-debian
+        executable: /bin/bash
+      async: 3600
+      poll: 10
+
+    - name: pull packages
+      synchronize:
+        mode: pull
+        src: /root/iconnect-debian/work/kernel/*.deb
+        dest: ../work
+
+    - name: umount cache volume
+      mount:
+        path: /root/iconnect-debian/work
+        state: unmounted

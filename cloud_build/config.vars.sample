@@ -1,0 +1,14 @@
+LINUX_KERNEL_LINK=https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-{{lookup('file', '../.ci_kernel_version')}}.tar.xz
+LINUX_KERNEL_DIR=$(echo $LINUX_KERNEL_LINK | sed 's|^.*/\(.*\).tar.xz$|\1|')
+LINUX_KERNEL_VERSION=$(echo $LINUX_KERNEL_DIR | sed 's/^linux-\(.*\)$/\1/')
+
+IMAGE_FILE=iconnect-stick-$LINUX_KERNEL_VERSION.raw
+
+DEBIAN_MIRROR=http://ftp.de.debian.org/debian/
+DEFAULT_PASSWORD=changeme
+DEBIAN_PKG_VERSION=$(date "+%d%m%y")
+
+## for local use
+WORK_DIR=./work
+
+COMPILE_THREADS=16

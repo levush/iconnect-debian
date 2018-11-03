@@ -15,3 +15,5 @@ config.vars
 .vagrant/*
 
 work/*
+
+*.retry

@@ -1,0 +1,51 @@
+# initialization
+- name: prepare cloud server
+  hosts: localhost
+  tasks:
+    - name: create cloud server
+      shell: |
+        hcloud server create \
+          --name {{ lookup('env','HCLOUD_VM_NAME') }} \
+          --location {{ lookup('env','HCLOUD_VM_LOCATION') }} \
+          --ssh-key {{ lookup('env','HCLOUD_VM_SSH_KEY_NAME') }} \
+          --type {{ lookup('env','HCLOUD_VM_TYPE') }} \
+          --image debian-9
+      register: cloud_server
+
+    - name: attach cache volume to cloud server
+      shell: |
+        hcloud volume attach {{ lookup('env','HCLOUD_CACHE_VOLUME_NAME') }} \
+          --server {{ lookup('env','HCLOUD_VM_NAME') }}
+
+    - name: add cloud server to hosts
+      add_host:
+        name: cloud_server
+        ansible_host: "{{ cloud_server.stdout | regex_search('(?:[0-9]{1,3}\\.){3}[0-9]{1,3}') }}"
+        ansible_user: root
+
+    - name: create local pkg directory
+      file:
+        path: ../work
+        state: directory
+
+    - name: wait for cloud server
+      wait_for:
+        host: cloud_server
+        timeout: 60
+        delay: 10
+        sleep: 5
+
+# build packages
+- import_playbook: build.yml
+
+# teardown
+- name: teardown cloud server
+  hosts: localhost
+  tasks:
+    - name: dettach cache volume from cloud server
+      shell: |
+        hcloud volume detach {{ lookup('env','HCLOUD_CACHE_VOLUME_NAME') }}
+    
+    - name: delete cloud server
+      shell: |
+        hcloud server delete {{ lookup('env','HCLOUD_VM_NAME') }}

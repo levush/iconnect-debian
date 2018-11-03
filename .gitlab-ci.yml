@@ -1,0 +1,38 @@
+image: busybox:latest
+
+variables:
+  ANSIBLE_HOST_KEY_CHECKING: "False"
+  HCLOUD_VM_NAME: iconnect-kernel-compile
+  HCLOUD_VM_TYPE: ccx31
+  HCLOUD_VM_LOCATION: nbg1
+  HCLOUD_VM_SSH_KEY_NAME: gitlab-ci 
+  HCLOUD_CACHE_VOLUME_NAME: iconnect-kernel-cache
+  # HCLOUD_TOKEN: secret
+  # SSH_PRIVATE_KEY: secret
+  # HCLOUD_CACHE_VOLUME_ID: secret
+   
+build:
+  stage: build
+  image: lu1as/hcloud
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - ansible-playbook cloud_build/main.yml
+  artifacts:
+    paths:
+      - work/*.deb
+    expire_in: 150 days
+  only:
+    - gitlab-ci
+    - master
+    - tags
+
+deploy:
+  stage: deploy
+  script:
+    - ls -l
+  dependencies:
+    - build
+  only:
+    - master
+    - tags
