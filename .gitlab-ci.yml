@@ -54,7 +54,7 @@ deploy:
   script:
     - ls -l
   dependencies:
-    - build
+    - build:deb
   only:
     - master
     - tags
