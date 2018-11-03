@@ -23,8 +23,6 @@ check:
 build:deb:
   stage: build
   image: lu1as/hcloud
-  dependencies:
-    - check
   before_script:
     - hcloud server create --name "$HCLOUD_VM_NAME" --location "$HCLOUD_VM_LOCATION" --ssh-key "$HCLOUD_VM_SSH_KEY_NAME" --type "$HCLOUD_VM_TYPE" --image "$HCLOUD_VM_IMAGE"
     - hcloud volume attach "$HCLOUD_CACHE_VOLUME_NAME" --server "$HCLOUD_VM_NAME"
