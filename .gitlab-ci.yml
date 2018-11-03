@@ -33,7 +33,6 @@ build:deb:
     - hcloud volume attach $HCLOUD_CACHE_VOLUME_NAME \
         --server $HCLOUD_VM_NAME
   script:
-    - export TERM=xterm
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - ansible-playbook cloud_build/main.yml

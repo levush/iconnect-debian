@@ -17,7 +17,10 @@ function pp {
     RED='\033[0;31m'
     NOCOLOR='\033[0m'
 
-    tput bold
+    if [ ! -z "$TERM" ] && [ -z "$CI" ]; then
+        tput bold
+    fi
+
     if [ "$1" == "INFO" ]; then
         printf "${GREEN}$2${NOCOLOR}\n"
     elif [ "$1" == "WARN" ]; then
@@ -27,7 +30,10 @@ function pp {
     else
         printf "$2\n"
     fi
-    tput sgr0
+
+    if [ ! -z "$TERM" ] && [ -z "$CI" ]; then
+        tput sgr0
+    fi
 }
 
 function check_root_privileges {
