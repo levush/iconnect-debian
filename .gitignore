@@ -1,17 +1,7 @@
-kernel/*
-!kernel/patches
-
-toolchain/*
-
-image/fs-kernel/lib/modules
-image/fs-kernel/boot
-image/fs-system/*
-
-image/mnt/*
+.vagrant/*
+*.deb
 *.raw
+*.retry
 
 config.vars
-
-.vagrant/*
-
 work/*
