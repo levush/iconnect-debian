@@ -17,7 +17,7 @@ function pp {
     RED='\033[0;31m'
     NOCOLOR='\033[0m'
 
-    if [ ! -z "$TERM" ] && [ -z "$CI" ]; then
+    if [ -z "$CI" ]; then
         tput bold
     fi
 
@@ -31,7 +31,7 @@ function pp {
         printf "$2\n"
     fi
 
-    if [ ! -z "$TERM" ] && [ -z "$CI" ]; then
+    if [ -z "$CI" ]; then
         tput sgr0
     fi
 }
