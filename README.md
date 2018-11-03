@@ -27,6 +27,10 @@ The image then can be found in `<WORK_DIR>/`. To write the image to an usb drive
 
 The packages then can be found in `<WORK_DIR>/kernel`.
 
+### Cloud build
+
+This repositry contains a Gitlab CI pipeline definition for building debian kernel packages with a Hetzner cloud server.
+
 ## Credits
 
 Thanks to congenio GmbH for creating the initial patch file, uboot images, firmware and usb leds workaround. Their image and instructions can be found [here](https://www.congenio.de/infos/iconnect.html)

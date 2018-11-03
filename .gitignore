@@ -2,6 +2,7 @@
 *.deb
 *.raw
 *.retry
+*.env
 
 config.vars
 work/*
