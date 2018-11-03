@@ -23,7 +23,7 @@
         ansible_host: "{{ cloud_server.stdout | regex_search('(?:[0-9]{1,3}\\.){3}[0-9]{1,3}') }}"
         ansible_user: root
 
-    - name: create local pkg directory
+    - name: create local work directory
       file:
         path: ../work
         state: directory

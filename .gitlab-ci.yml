@@ -15,6 +15,7 @@ build:
   stage: build
   image: lu1as/hcloud
   script:
+    - export TERM=xterm
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - ansible-playbook cloud_build/main.yml
