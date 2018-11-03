@@ -35,19 +35,23 @@ build:deb:
     - hcloud volume detach "$HCLOUD_CACHE_VOLUME_NAME" || true
     - hcloud server delete "$HCLOUD_VM_NAME"
   artifacts:
+    name: ${CI_PROJECT_NAME}-kernel-${CI_COMMIT_REF_NAME}
     paths:
       - kernel-pkgs/*.deb
-    expire_in: 150 days
+    expire_in: 30 days
   only:
     - master
     - tags
+  when: manual
 
 deploy:
   stage: deploy
-  script:
-    - ls -l
   dependencies:
     - build:deb
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - ls -l
   only:
     - master
     - tags
