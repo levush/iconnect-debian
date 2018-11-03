@@ -5,26 +5,39 @@ variables:
   HCLOUD_VM_NAME: iconnect-kernel-compile
   HCLOUD_VM_TYPE: ccx31
   HCLOUD_VM_LOCATION: nbg1
-  HCLOUD_VM_SSH_KEY_NAME: gitlab-ci 
+  HCLOUD_VM_SSH_KEY_NAME: gitlab-ci
+  HCLOUD_VM_IMAGE: debian-9
   HCLOUD_CACHE_VOLUME_NAME: iconnect-kernel-cache
   # HCLOUD_TOKEN: secret
   # SSH_PRIVATE_KEY: secret
   # HCLOUD_CACHE_VOLUME_ID: secret
    
-build:
+build:deb:
   stage: build
   image: lu1as/hcloud
+  before_script:
+    - hcloud server create \
+        --name $HCLOUD_VM_NAME \
+        --location $HCLOUD_VM_LOCATION \
+        --ssh-key $HCLOUD_VM_SSH_KEY_NAME \
+        --type $HCLOUD_VM_TYPE \
+        --image $HCLOUD_VM_IMAGE
+    - hcloud volume attach $HCLOUD_CACHE_VOLUME_NAME \
+        --server $HCLOUD_VM_NAME
   script:
     - export TERM=xterm
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - ansible-playbook cloud_build/main.yml
+  after_script:
+    - hcloud server poweroff $HCLOUD_VM_NAME || true
+    - hcloud volume detach $HCLOUD_CACHE_VOLUME_NAME || true
+    - hcloud server delete $HCLOUD_VM_NAME
   artifacts:
     paths:
-      - work/*.deb
+      - kernel-pkgs/*.deb
     expire_in: 150 days
   only:
-    - gitlab-ci
     - master
     - tags
 

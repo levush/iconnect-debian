@@ -1,6 +1,9 @@
 - name: build kernel packages
   hosts: cloud_server
   tasks:
+    - debug:
+        msg: "building debian packages for kernel {{ lookup('file', '../.ci_kernel_version') }}"
+
     - name: install requirements
       apt:
         name:
@@ -47,9 +50,6 @@
         opts: discard,defaults
         state: mounted
 
-    - debug:
-        msg: "building debian packages for kernel {{ lookup('file', '../.ci_kernel_version') }}"
-
     - name: create config.vars
       template:
         src: ./config.vars.sample
@@ -67,7 +67,7 @@
       synchronize:
         mode: pull
         src: /root/iconnect-debian/work/kernel/*.deb
-        dest: ../work
+        dest: ../kernel-pkgs
 
     - name: umount cache volume
       mount:
