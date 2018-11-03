@@ -11,7 +11,15 @@ variables:
   # HCLOUD_TOKEN: secret
   # SSH_PRIVATE_KEY: secret
   # HCLOUD_CACHE_VOLUME_ID: secret
-   
+
+check:
+  stage: build
+  image: lu1as/hcloud
+  script:
+    - ansible-playbook cloud_build/main.yml --syntax-check
+    - cp config.vars.sample config.vars
+    - ./run.sh help
+
 build:deb:
   stage: build
   image: lu1as/hcloud
