@@ -11,6 +11,7 @@ variables:
   # HCLOUD_TOKEN: secret
   # SSH_PRIVATE_KEY: secret
   # HCLOUD_CACHE_VOLUME_ID: secret
+  # RSYNC_MODULE: secret
 
 check:
   stage: build
@@ -43,15 +44,17 @@ build:deb:
     - master
     - tags
   when: manual
+  allow_failure: false
 
 deploy:
   stage: deploy
+  image: lu1as/hcloud
   dependencies:
     - build:deb
   variables:
     GIT_STRATEGY: none
   script:
-    - ls -l
+    - rsync kernel-pkgs/*.deb $RSYNC_MODULE
   only:
     - master
     - tags
