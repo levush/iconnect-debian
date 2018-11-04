@@ -35,7 +35,7 @@
       git:
         repo: "{{ lookup('env','CI_REPOSITORY_URL') }}"
         dest: /root/iconnect-debian
-        version: gitlab-ci
+        version: "{{ lookup('env','CI_COMMIT_REF_NAME') }}"
  
     - name: create work directory
       file:
