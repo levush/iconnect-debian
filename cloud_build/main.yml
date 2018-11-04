@@ -2,7 +2,7 @@
 - name: prepare cloud server
   hosts: localhost
   tasks:
-    - name: create cloud server
+    - name: discover cloud server
       shell: |
         hcloud server describe {{ lookup('env','HCLOUD_VM_NAME') }}
       register: cloud_server

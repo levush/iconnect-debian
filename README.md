@@ -31,6 +31,14 @@ The packages then can be found in `<WORK_DIR>/kernel`.
 
 This repositry contains a Gitlab CI pipeline definition for building debian kernel packages with a Hetzner cloud server.
 
+Kernel packages are published to [deb.zotha.de](https://deb.zotha.de) repository.
+For using it import the public key and add it to apt sources.
+
+```
+wget -O - https://deb.zotha.de/public.key | apt-key add -
+echo "deb https://deb.zotha.de debian main" > /etc/apt/sources.list.d/iconnect-kernel.list
+```
+
 ## Credits
 
 Thanks to congenio GmbH for creating the initial patch file, uboot images, firmware and usb leds workaround. Their image and instructions can be found [here](https://www.congenio.de/infos/iconnect.html)
