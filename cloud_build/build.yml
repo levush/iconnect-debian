@@ -2,7 +2,7 @@
   hosts: cloud_server
   tasks:
     - debug:
-        msg: "building debian packages for kernel {{ lookup('file', '../.ci_kernel_version') }}"
+        msg: "building {{ lookup('env','JOB_TARGET') }} with kernel {{ lookup('file', '../.ci_kernel_version') }}"
 
     - name: install requirements
       apt:
@@ -55,8 +55,14 @@
         src: ./config.vars.sample
         dest: /root/iconnect-debian/config.vars
 
-    - name: build debian packages
-      shell: CI="true" ./run.sh {{ lookup('env','JOB_TARGET') }}
+    - name: clear filesystem cache
+      file:
+        path: /root/iconnect-debian/work/image/fs-system
+        state: absent
+      when: lookup('env','CLEAR_FILESYSTEM_CACHE')
+
+    - name: run job
+      shell: "CI='true' ./run.sh {{ lookup('env','JOB_TARGET') }}"
       args:
         chdir: /root/iconnect-debian
         executable: /bin/bash
@@ -68,14 +74,14 @@
         mode: pull
         src: /root/iconnect-debian/work/kernel/*.deb
         dest: ../kernel-pkgs
-      when: "{{ lookup('env','JOB_TARGET') }} == 'deb'"
+      when: lookup('env','JOB_TARGET') == 'deb'
 
     - name: pull image
       synchronize:
         mode: pull
         src: /root/iconnect-debian/work/iconnect-stick-*.raw
         dest: ../
-      when: "{{ lookup('env','JOB_TARGET') }} == 'image'"
+      when: lookup('env','JOB_TARGET') == 'image'
 
     - name: umount cache volume
       mount:

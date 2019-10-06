@@ -40,6 +40,7 @@ build:deb:
   <<: *hcloud
   variables:
     JOB_TARGET: deb
+    CLEAR_FILESYSTEM_CACHE: "false"
   script:
     - ansible-playbook cloud_build/main.yml
     - rsync kernel-pkgs/*.deb $RSYNC_MODULE
@@ -60,6 +61,7 @@ build:image:
   <<: *hcloud
   variables:
     JOB_TARGET: image
+    CLEAR_FILESYSTEM_CACHE: "false"
   script:
     - ansible-playbook cloud_build/main.yml
   artifacts:

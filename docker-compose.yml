@@ -13,6 +13,8 @@ services:
       HCLOUD_CACHE_VOLUME_NAME: iconnect-kernel-cache
       HCLOUD_TOKEN: $HCLOUD_TOKEN
       HCLOUD_CACHE_VOLUME_ID: $HCLOUD_CACHE_VOLUME_ID
+      CI_REPOSITORY_URL: https://git.zotha.de/lukas/iconnect-debian
+      CI_COMMIT_REF_NAME: master
     volumes:
       - $PWD:/home/user/iconnect-debian
     command: sleep 36000
