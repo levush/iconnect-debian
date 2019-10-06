@@ -59,7 +59,7 @@
       file:
         path: /root/iconnect-debian/work/image/fs-system
         state: absent
-      when: lookup('env','CLEAR_FILESYSTEM_CACHE')
+      when: lookup('env','CLEAR_FILESYSTEM_CACHE') == 'true'
 
     - name: run job
       shell: "CI='true' ./run.sh {{ lookup('env','JOB_TARGET') }}"

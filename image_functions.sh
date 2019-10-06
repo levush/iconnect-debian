@@ -69,14 +69,8 @@ function image_umount {
 
 function check_loop_module {
     if [ ! -f /sys/module/loop/parameters/max_part ] || [ "$(cat /sys/module/loop/parameters/max_part)" == "0" ]; then
-        pp WARN "Kernel module loop needs to be reloaded, proceed? (y/n)"
-        read confirm
-        if [ "$confirm" == "y" ]; then
-            modprobe -r loop
-            modprobe loop max_part=31
-        else
-            pp ERROR "Can't create stick image without reloading kernel module"
-            exit 1
-        fi
+        pp INFO "Reload loop kernel module"
+        modprobe -r loop
+        modprobe loop max_part=31
     fi
 }
