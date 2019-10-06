@@ -22,7 +22,6 @@
       wait_for:
         host: cloud_server
         timeout: 60
-        delay: 10
         sleep: 5
 
 # build packages
