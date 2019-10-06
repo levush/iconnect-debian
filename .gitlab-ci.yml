@@ -64,6 +64,8 @@ build:image:
     CLEAR_FILESYSTEM_CACHE: "false"
   script:
     - ansible-playbook cloud_build/main.yml
+    - ls -l
+    - ls -l cloud_build
   artifacts:
     name: ${CI_PROJECT_NAME}-image-${CI_COMMIT_REF_NAME}
     paths:
