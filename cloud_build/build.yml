@@ -68,6 +68,14 @@
         mode: pull
         src: /root/iconnect-debian/work/kernel/*.deb
         dest: ../kernel-pkgs
+      when: "{{ lookup('env','JOB_TARGET') }} == 'deb'"
+
+    - name: pull image
+      synchronize:
+        mode: pull
+        src: /root/iconnect-debian/work/iconnect-stick-*.raw
+        dest: ../
+      when: "{{ lookup('env','JOB_TARGET') }} == 'image'"
 
     - name: umount cache volume
       mount:

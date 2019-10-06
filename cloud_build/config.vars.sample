@@ -1,4 +1,4 @@
-LINUX_KERNEL_LINK=https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-{{lookup('file', '../.ci_kernel_version')}}.tar.xz
+LINUX_KERNEL_LINK=https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-{{lookup('file', '../.ci_kernel_version')}}.tar.xz
 LINUX_KERNEL_DIR=$(echo $LINUX_KERNEL_LINK | sed 's|^.*/\(.*\).tar.xz$|\1|')
 LINUX_KERNEL_VERSION=$(echo $LINUX_KERNEL_DIR | sed 's/^linux-\(.*\)$/\1/')
 

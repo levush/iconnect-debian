@@ -1,8 +1,6 @@
 stages:
   - test
-  - build:deb
-  - build:image
-  - deploy
+  - build
 
 variables:
   ANSIBLE_HOST_KEY_CHECKING: "False"
@@ -37,13 +35,14 @@ check:
     - hcloud server delete "$HCLOUD_VM_NAME"
 
 build:deb:
-  stage: build:deb
+  stage: build
   image: lu1as/hcloud
   <<: *hcloud
   variables:
     JOB_TARGET: deb
   script:
     - ansible-playbook cloud_build/main.yml
+    - rsync kernel-pkgs/*.deb $RSYNC_MODULE
   artifacts:
     name: ${CI_PROJECT_NAME}-kernel-${CI_COMMIT_REF_NAME}
     paths:
@@ -56,7 +55,7 @@ build:deb:
   allow_failure: false
 
 build:image:
-  stage: build:image
+  stage: build
   image: lu1as/hcloud
   <<: *hcloud
   variables:
@@ -72,17 +71,4 @@ build:image:
     - master
     - tags
   when: manual
-  allow_failure: false
-
-deploy:
-  stage: deploy
-  image: lu1as/hcloud
-  dependencies:
-    - build:deb
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - rsync kernel-pkgs/*.deb $RSYNC_MODULE
-  only:
-    - master
-    - tags
+  allow_failure: true
