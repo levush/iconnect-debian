@@ -44,7 +44,7 @@ build:
   script:
     - ansible-playbook cloud_build/main.yml
   artifacts:
-    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}
+    name: ${CI_PROJECT_NAME}-image-${CI_COMMIT_REF_NAME}
     paths:
       - "*.raw"
       - kernel-pkgs/*.deb
