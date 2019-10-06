@@ -5,7 +5,7 @@
     kernel_deb_version: "{{ lookup('pipe', 'date +%d%m%y') }}"
   tasks:
     - debug:
-        msg: "building {{ lookup('env','JOB_TARGET') }} with kernel {{ kernel_version }}"
+        msg: "building image and packages with kernel {{ kernel_version }}"
 
     - name: install requirements
       apt:
@@ -65,7 +65,7 @@
       when: lookup('env','CLEAR_FILESYSTEM_CACHE') == 'true'
 
     - name: run job
-      shell: "CI='true' ./run.sh {{ lookup('env','JOB_TARGET') }}"
+      shell: CI='true' ./run.sh image
       args:
         chdir: /root/iconnect-debian
         executable: /bin/bash
@@ -81,14 +81,12 @@
         - "linux-headers-{{ kernel_version }}-iconnect_{{ kernel_deb_version }}_armel.deb"
         - "linux-image-{{ kernel_version }}-iconnect_{{ kernel_deb_version }}_armel.deb"
         - "linux-libc-dev_{{ kernel_deb_version }}_armel.deb"
-      when: lookup('env','JOB_TARGET') == 'deb'
 
     - name: pull image
       synchronize:
         mode: pull
         src: "/root/iconnect-debian/work/iconnect-stick-{{ kernel_version }}.raw"
         dest: "{{ lookup('env','CI_PROJECT_DIR') }}"
-      when: lookup('env','JOB_TARGET') == 'image'
 
     - name: umount cache volume
       mount:

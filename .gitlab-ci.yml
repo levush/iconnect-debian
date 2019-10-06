@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - publish
 
 variables:
   ANSIBLE_HOST_KEY_CHECKING: "False"
@@ -34,43 +35,33 @@ check:
     - hcloud volume detach "$HCLOUD_CACHE_VOLUME_NAME" || true
     - hcloud server delete "$HCLOUD_VM_NAME"
 
-build:deb:
+build:
   stage: build
   image: lu1as/hcloud
   <<: *hcloud
   variables:
-    JOB_TARGET: deb
     CLEAR_FILESYSTEM_CACHE: "false"
   script:
     - ansible-playbook cloud_build/main.yml
-    - rsync kernel-pkgs/*.deb $RSYNC_MODULE
   artifacts:
-    name: ${CI_PROJECT_NAME}-kernel-${CI_COMMIT_REF_NAME}
+    name: ${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}
     paths:
+      - "*.raw"
       - kernel-pkgs/*.deb
-    expire_in: 30 days
+    expire_in: 90 days
   only:
     - master
     - tags
   when: manual
   allow_failure: false
 
-build:image:
-  stage: build
+publish:deb:
+  stage: publish
   image: lu1as/hcloud
-  <<: *hcloud
-  variables:
-    JOB_TARGET: image
-    CLEAR_FILESYSTEM_CACHE: "false"
   script:
-    - ansible-playbook cloud_build/main.yml
-    - ls -l
-    - ls -l cloud_build
-  artifacts:
-    name: ${CI_PROJECT_NAME}-image-${CI_COMMIT_REF_NAME}
-    paths:
-      - "*.raw"
-    expire_in: 90 days
+    - rsync kernel-pkgs/*.deb $RSYNC_MODULE
+  dependencies:
+    - build
   only:
     - master
     - tags
