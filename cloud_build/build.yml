@@ -73,14 +73,14 @@
       synchronize:
         mode: pull
         src: /root/iconnect-debian/work/kernel/*.deb
-        dest: ../kernel-pkgs
+        dest: "{{ lookup('env','CI_PROJECT_DIR') }}/kernel-pkgs"
       when: lookup('env','JOB_TARGET') == 'deb'
 
     - name: pull image
       synchronize:
         mode: pull
         src: /root/iconnect-debian/work/*.raw
-        dest: ../
+        dest: "{{ lookup('env','CI_PROJECT_DIR') }}"
       when: lookup('env','JOB_TARGET') == 'image'
 
     - name: umount cache volume

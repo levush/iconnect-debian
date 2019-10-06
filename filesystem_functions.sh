@@ -6,8 +6,6 @@ function filesystem_debootstrap {
     if [ ! -d "image/fs-system" ]; then
         pp INFO "Create filesystem"
         debootstrap --arch=armel --foreign stretch image/fs-system $DEBIAN_MIRROR
-        cp $(which qemu-arm-static) image/fs-system/usr/bin
-        cp /etc/resolv.conf image/fs-system/etc
 
         filesystem_chroot_prepare
         LANG=C.UTF-8 chroot image/fs-system << EOT
