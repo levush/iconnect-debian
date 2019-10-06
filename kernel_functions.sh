@@ -48,10 +48,14 @@ function kernel_build {
         exit 1
     fi
 
-    pp INFO "Build debian kernel packages"
-    cd kernel/$LINUX_KERNEL_DIR
-    make -j$COMPILE_THREADS KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEBIAN_PKG_VERSION deb-pkg
-    kernel_headers_rebuild
+    if [ ! -f "kernel/linux-headers-$LINUX_KERNEL_VERSION-iconnect_${DEBIAN_PKG_VERSION}_armel.deb" ]; then
+        pp INFO "Build debian kernel packages"
+        cd kernel/$LINUX_KERNEL_DIR
+        make -j$COMPILE_THREADS KBUILD_IMAGE=uImage KBUILD_DEBARCH=armel KDEB_PKGVERSION=$DEBIAN_PKG_VERSION deb-pkg
+        kernel_headers_rebuild
+    else
+        pp WARN "Kernel packages are already created"
+    fi
     cd $WORK_DIR
 }
 

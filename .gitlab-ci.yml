@@ -67,7 +67,7 @@ build:image:
   artifacts:
     name: ${CI_PROJECT_NAME}-image-${CI_COMMIT_REF_NAME}
     paths:
-      - iconnect-stick-*.raw
+      - "*.raw"
     expire_in: 90 days
   only:
     - master

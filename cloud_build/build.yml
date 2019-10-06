@@ -79,7 +79,7 @@
     - name: pull image
       synchronize:
         mode: pull
-        src: /root/iconnect-debian/work/iconnect-stick-*.raw
+        src: /root/iconnect-debian/work/*.raw
         dest: ../
       when: lookup('env','JOB_TARGET') == 'image'
 
