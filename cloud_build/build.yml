@@ -56,7 +56,7 @@
         dest: /root/iconnect-debian/config.vars
 
     - name: build debian packages
-      shell: CI="true" ./run.sh deb
+      shell: CI="true" ./run.sh {{ lookup('env','JOB_TARGET') }}
       args:
         chdir: /root/iconnect-debian
         executable: /bin/bash

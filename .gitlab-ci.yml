@@ -1,4 +1,7 @@
-image: busybox:latest
+stages:
+  - build:deb
+  - build:image
+  - deploy
 
 variables:
   ANSIBLE_HOST_KEY_CHECKING: "False"
@@ -6,7 +9,7 @@ variables:
   HCLOUD_VM_TYPE: ccx31
   HCLOUD_VM_LOCATION: nbg1
   HCLOUD_VM_SSH_KEY_NAME: gitlab-ci
-  HCLOUD_VM_IMAGE: debian-9
+  HCLOUD_VM_IMAGE: debian-10
   HCLOUD_CACHE_VOLUME_NAME: iconnect-kernel-cache
   # HCLOUD_TOKEN: secret
   # SSH_PRIVATE_KEY: secret
@@ -21,25 +24,49 @@ check:
     - cp config.vars.sample config.vars
     - ./run.sh help
 
-build:deb:
-  stage: build
-  image: lu1as/hcloud
+.hcloud: &hcloud
   before_script:
     - hcloud server create --name "$HCLOUD_VM_NAME" --location "$HCLOUD_VM_LOCATION" --ssh-key "$HCLOUD_VM_SSH_KEY_NAME" --type "$HCLOUD_VM_TYPE" --image "$HCLOUD_VM_IMAGE"
     - hcloud volume attach "$HCLOUD_CACHE_VOLUME_NAME" --server "$HCLOUD_VM_NAME"
-  script:
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - ansible-playbook cloud_build/main.yml
   after_script:
     - hcloud server poweroff "$HCLOUD_VM_NAME" || true
     - hcloud volume detach "$HCLOUD_CACHE_VOLUME_NAME" || true
     - hcloud server delete "$HCLOUD_VM_NAME"
+
+build:deb:
+  stage: build:deb
+  image: lu1as/hcloud
+  <<: *hcloud
+  variables:
+    JOB_TARGET: deb
+  script:
+    - ansible-playbook cloud_build/main.yml
   artifacts:
     name: ${CI_PROJECT_NAME}-kernel-${CI_COMMIT_REF_NAME}
     paths:
       - kernel-pkgs/*.deb
     expire_in: 30 days
+  only:
+    - master
+    - tags
+  when: manual
+  allow_failure: false
+
+build:image:
+  stage: build:image
+  image: lu1as/hcloud
+  <<: *hcloud
+  variables:
+    JOB_TARGET: image
+  script:
+    - ansible-playbook cloud_build/main.yml
+  artifacts:
+    name: ${CI_PROJECT_NAME}-image-${CI_COMMIT_REF_NAME}
+    paths:
+      - iconnect-stick-*.raw
+    expire_in: 90 days
   only:
     - master
     - tags

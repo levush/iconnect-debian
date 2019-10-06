@@ -9,8 +9,10 @@ services:
       HCLOUD_VM_TYPE: ccx31
       HCLOUD_VM_LOCATION: nbg1
       HCLOUD_VM_SSH_KEY_NAME: gitlab-ci
-      HCLOUD_VM_IMAGE: debian-9
+      HCLOUD_VM_IMAGE: debian-10
       HCLOUD_CACHE_VOLUME_NAME: iconnect-kernel-cache
       HCLOUD_TOKEN: $HCLOUD_TOKEN
       HCLOUD_CACHE_VOLUME_ID: $HCLOUD_CACHE_VOLUME_ID
+    volumes:
+      - $PWD:/home/user/iconnect-debian
     command: sleep 36000
