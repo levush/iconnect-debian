@@ -1,4 +1,5 @@
 stages:
+  - test
   - build:deb
   - build:image
   - deploy
@@ -17,7 +18,7 @@ variables:
   # RSYNC_MODULE: secret
 
 check:
-  stage: build
+  stage: test
   image: lu1as/hcloud
   script:
     - ansible-playbook cloud_build/main.yml --syntax-check
