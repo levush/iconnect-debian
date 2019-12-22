@@ -6,6 +6,7 @@ IMAGE_FILE=iconnect-stick-$LINUX_KERNEL_VERSION.raw
 
 DEBIAN_MIRROR=http://ftp.halifax.rwth-aachen.de/debian/
 DEFAULT_PASSWORD=changeme
+DEBIAN_RELEASE=buster
 DEBIAN_PKG_VERSION=$(date "+%d%m%y")
 
 ## for local use
