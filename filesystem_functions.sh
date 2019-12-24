@@ -5,7 +5,7 @@ function filesystem_debootstrap {
     check_root_privileges
     if [ ! -d "image/fs-system" ]; then
         pp INFO "Create filesystem"
-        debootstrap --arch=armel --foreign stretch image/fs-system $DEBIAN_MIRROR
+        debootstrap --arch=armel --foreign $DEBIAN_RELEASE image/fs-system $DEBIAN_MIRROR
 
         filesystem_chroot_prepare
         LANG=C.UTF-8 chroot image/fs-system << EOT

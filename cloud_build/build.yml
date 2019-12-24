@@ -64,6 +64,12 @@
         state: absent
       when: lookup('env','CLEAR_FILESYSTEM_CACHE') == 'true'
 
+    - name: clear kernel cache
+      file:
+        path: /root/iconnect-debian/work/kernel
+        state: absent
+      when: lookup('env','CLEAR_KERNEL_CACHE') == 'true'
+
     - name: run job
       shell: CI='true' ./run.sh image
       args:
