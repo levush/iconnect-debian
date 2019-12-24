@@ -41,6 +41,7 @@ build:
   <<: *hcloud
   variables:
     CLEAR_FILESYSTEM_CACHE: "false"
+    CLEAR_KERNEL_CACHE: "true"
   script:
     - ansible-playbook cloud_build/main.yml
   artifacts:
@@ -49,9 +50,6 @@ build:
       - "*.raw"
       - kernel-pkgs/*.deb
     expire_in: 90 days
-  only:
-    - master
-    - tags
   when: manual
   allow_failure: false
 

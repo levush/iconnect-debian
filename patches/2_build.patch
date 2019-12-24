@@ -1,0 +1,47 @@
+--- arch/arm/boot/Makefile.orig	1970-01-01 01:00:00.000000000 +0100
++++ arch/arm/boot/Makefile	2019-12-22 19:05:26.000000000 +0100
+@@ -63,8 +63,13 @@
+ $(obj)/compressed/vmlinux: $(obj)/Image FORCE
+ 	$(Q)$(MAKE) $(build)=$(obj)/compressed $@
+
+-$(obj)/zImage:	$(obj)/compressed/vmlinux FORCE
++dtbfile := $(shell echo $(CONFIG_ARM_APPENDED_DTB_FILE))
++quiet_cmd_append = APPEND  $(dtbfile)  $@
++      cmd_append = (cat /dev/null $(dtbfile) >> $@)
++
++$(obj)/zImage: $(obj)/compressed/vmlinux $(dtbfile) FORCE
+ 	$(call if_changed,objcopy)
++	$(call if_changed,append)
+
+ endif
+
+--- arch/arm/Kconfig.orig	1970-01-01 01:00:00.000000000 +0100
++++ arch/arm/Kconfig	2019-12-22 19:03:59.000000000 +0100
+@@ -1896,6 +1896,16 @@
+ 	  location into r2 of a bootloader provided DTB is always preferable
+ 	  to this option.
+
++config ARM_APPENDED_DTB_FILE
++	string "DTB file"
++	depends on ARM_APPENDED_DTB
++	default ""
++	help
++	  This gives the name of file from the build directory to append
++	  to the zImage after it has been built.
++
++	  If you are not sure, leave it blank.
++
+ config ARM_ATAG_DTB_COMPAT
+ 	bool "Supplement the appended DTB with traditional ATAG information"
+ 	depends on ARM_APPENDED_DTB
+--- scripts/package/builddeb.orig	1970-01-01 01:00:00.000000000 +0100
++++ scripts/package/builddeb	2018-08-11 16:20:42.000000000 +0200
+@@ -81,7 +81,7 @@
+ 	cp System.map "$tmpdir/boot/System.map-$version"
+ 	cp $KCONFIG_CONFIG "$tmpdir/boot/config-$version"
+ fi
+-cp "$($MAKE -s -f $srctree/Makefile image_name)" "$tmpdir/$installed_image_path"
++cp "arch/arm/boot/uImage" "$tmpdir/boot/uImage"
+
+ if grep -q "^CONFIG_OF=y" $KCONFIG_CONFIG ; then
+ 	# Only some architectures with OF support have this target
