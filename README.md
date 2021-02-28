@@ -4,7 +4,7 @@ This repository contains scripts to create a debian iconnect stick image.
 Moreover it's possible to build debian kernel packages for updating an existing system or install kernel headers afterwards.
 The scripts are tested with debian, they should also work with other distributions, except `setup_packages`.
 
-## Setup
+## Make enable ssh on iconnect and make iconnect boot from usb
 First make sure that the iconnect will boot from an usb stick.
 Use iconnect_usb_boot.sh for this purpose which you execute on the iconnect using ssh.
 
@@ -24,6 +24,7 @@ execute /tmp/ionnect_usb_boot.sh on your iconnect.
 
 If you are sucessful, you can now boot your iconnect using a usb stick.
 
+## Setup
 Be sure that you have git-lfs installed before you clone the repository.
 For Debian: `sudo apt install git-lfs`
 After cloning initialize lfs in repository: `git lfs install`
