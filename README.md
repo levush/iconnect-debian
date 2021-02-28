@@ -5,6 +5,22 @@ Moreover it's possible to build debian kernel packages for updating an existing 
 The scripts are tested with debian, they should also work with other distributions, except `setup_packages`.
 
 ## Setup
+First make sure that the iconnect will boot from an usb stick.
+Use iconnect_usb_boot.sh for this purpose which you execute on the iconnect using ssh.
+
+So you will want to enable ssh on the iconnect as first step:
+If you have not done so, you will *need to enable ssh* on the stock iConnect,
+which can be done from Iomega's *hidden* Web UI screen. Open 
+ https://<iconnect's IP or hostname>/support.html
+
+with a browser and click on *Support Access*,"
+check *Allow remote access for support* and click *Apply*"
+
+The password will be soho+<yourpasswd> try soho if you did not set a passwd.
+Then ssh to your iconnect and copy iconnect_usb_boot.sh to /tmp using
+wget or scp and make it executeable chmod 777 /tmp/connect_usb_boot.sh 
+If you are sucessful, you can now boot your iconnect using a usb stick.
+
 Be sure that you have git-lfs installed before you clone the repository.
 For Debian: `sudo apt install git-lfs`
 After cloning initialize lfs in repository: `git lfs install`
