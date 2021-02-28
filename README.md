@@ -62,3 +62,9 @@ echo "deb https://deb.zotha.de debian main" > /etc/apt/sources.list.d/iconnect-k
 ## Credits
 
 Thanks to congenio GmbH for creating the initial patch file, uboot images, firmware and usb leds workaround. Their image and instructions can be found [here](https://www.congenio.de/infos/iconnect.html)
+
+iconnect_usb_boot.sh modified version of
+Iomega iConnect u-Boot USB setup and Arch installer by Igor Slepchin
+which is partially based on Dockstar u-Boot mtd0 Installer
+by Jeff Doozan: http://jeff.doozan.com/debian/uboot/ 
+and oxnas installer (http://archlinuxarm.org/os/oxnas/oxnas-install.sh)
