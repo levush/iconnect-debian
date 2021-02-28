@@ -16,7 +16,7 @@ which can be done from Iomega's *hidden* Web UI screen. Open
 with a browser and click on *Support Access*,"
 check *Allow remote access for support* and click *Apply*"
 
-The password will be soho+<yourpasswd> try soho if you did not set a passwd.
+The password will be soho+yourpasswd try soho if you did not set a passwd.
 Then ssh to your iconnect and copy iconnect_usb_boot.sh to /tmp using
 wget or scp and make it executeable chmod 777 /tmp/connect_usb_boot.sh 
 If you are sucessful, you can now boot your iconnect using a usb stick.
