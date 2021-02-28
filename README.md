@@ -19,6 +19,8 @@ check *Allow remote access for support* and click *Apply*"
 The password will be soho+yourpasswd try soho if you did not set a passwd.
 Then ssh to your iconnect and copy iconnect_usb_boot.sh to /tmp using
 wget or scp and make it executeable chmod 777 /tmp/connect_usb_boot.sh 
+execute /tmp/onnect_usb_boot.sh on your iconnect.
+
 If you are sucessful, you can now boot your iconnect using a usb stick.
 
 Be sure that you have git-lfs installed before you clone the repository.
